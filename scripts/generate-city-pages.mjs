@@ -1,0 +1,508 @@
+/**
+ * Generates static SEO city pages for Chip Zorro service areas.
+ * Run AFTER `vite build` — writes into dist/ (which is then deployed).
+ * Usage: node scripts/generate-city-pages.mjs
+ */
+import { writeFileSync, mkdirSync, readFileSync, copyFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DIST = join(__dirname, '..', 'dist');
+const DATA = JSON.parse(readFileSync(join(__dirname, '..', 'src', 'data', 'serviceAreas.json'), 'utf8'));
+const BASE = DATA.base;
+const PHONE_DISPLAY = '(800) 555-2447';
+const PHONE_RAW = '8005552447';
+
+// Stable brand asset path for the static pages (Vite hashes asset names, so copy once here)
+const BRAND_IMG = 'brand/chip_zorro_mark.png';
+
+const slugify = (s) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+// City list + clusters come from src/data/serviceAreas.json (shared with the site nav).
+// Local flavor lines are page-content only and live here, keyed by city name.
+const FLAVORS = {
+  'Escondido': 'North County\u2019s inland hub, from downtown Grand Avenue to the hills around Daley Ranch',
+  'San Marcos': 'from the neighborhoods around Cal State San Marcos to Discovery Lake',
+  'Lake San Marcos': 'the lakeside resort community and surrounding neighborhoods',
+  'Hidden Meadows': 'the quiet rural neighborhoods tucked into the hills north of Escondido',
+  'Valley Center': 'across the valley\u2019s ranches, groves, and country roads',
+  'Poway': '\u201CThe City in the Country\u201D \u2014 from Old Poway to the business park',
+  'Vista': 'from the historic downtown to Shadowridge and the surrounding hills',
+  'Fairbanks Ranch': 'the gated lakefront community and nearby estates',
+  'Pauma Valley': 'up the valley past Harrah\u2019s toward the rural ranches',
+  'Encinitas': 'the coastal surf town, from Leucadia to Olivenhain',
+  'Carlsbad': 'from the Village to La Costa and the flower fields corridor',
+  'Bonsall': 'along the San Luis Rey river valley\u2019s rural roads',
+  'San Luis Rey': 'the historic mission-area neighborhoods of Oceanside\u2019s east side',
+  'Twin Oaks': 'the small valley community between San Marcos and Vista',
+  'Harmony Grove': 'the village neighborhoods south of Escondido',
+  'Del Dios': 'around Lake Hodges and the Del Dios corridor',
+  'Rancho Santa Fe': 'the covenant community\u2019s estates, from the Village to the surrounding ranches',
+  'Elfin Forest': 'the rural reserve community between San Marcos and Escondido',
+  'Fallbrook': 'the \u201CAvocado Capital of the World,\u201D from downtown to the groves',
+  'Rancho Bernardo': 'from the Bernardo Center to the residential villages',
+  'Oceanside': 'the coastal city, from the harbor and pier to Fire Mountain',
+  'San Pasqual': 'the San Pasqual Valley, near the Safari Park and surrounding farms',
+  'Pala': 'around the Pala Casino area and the valley\u2019s rural roads',
+  'Rainbow': 'the rural community along the I-15 corridor near the county line',
+  'Ramona': 'from Main Street to the backcountry ranches and vineyards',
+  'Lakeside': 'around Lindo Lake and the surrounding neighborhoods',
+  'San Diego': 'across America\u2019s Finest City \u2014 we dispatch throughout the metro',
+  'Santee': 'from the Town Center to the neighborhoods along the San Diego River',
+  'Solana Beach': 'the coastal bluff-top community and Cedros design district',
+  'Del Mar': 'from the village and racetrack area to the beach colony',
+  'Temecula': 'Wine Country and the surrounding neighborhoods, just over the county line',
+};
+
+const CITIES = DATA.clusters.flatMap((c) => c.cities.map((name) => [name, FLAVORS[name] || 'and surrounding neighborhoods']));
+
+const cityCluster = {};
+for (const { label, cities } of DATA.clusters) {
+  for (const n of cities) cityCluster[n] = cities;
+}
+
+const AREA_COUNT = DATA.clusters.reduce((n, c) => n + c.cities.length, 0);
+const cityUrl = (name) => `${BASE}/windshield-chip-repair-${slugify(name)}/`;
+
+const svgWrap = (inner) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+const ICONS = {
+  menu: svgWrap('<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>'),
+  x: svgWrap('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),
+  phone: svgWrap('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'),
+  zap: svgWrap('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'),
+  wrench: svgWrap('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+  list: svgWrap('<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><line x1="13" x2="21" y1="6" y2="6"/><line x1="13" x2="21" y1="12" y2="12"/><line x1="13" x2="21" y1="18" y2="18"/>'),
+  pin: svgWrap('<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>'),
+  map: svgWrap('<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>'),
+  star: svgWrap('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'),
+  chevD: svgWrap('<path d="m6 9 6 6 6-6"/>'),
+  chevR: svgWrap('<path d="m9 18 6-6-6-6"/>'),
+};
+
+const megaClustersHtml = DATA.clusters.map((c) => `
+<div><div class="mega-cl">${c.label}</div><ul>
+${c.cities.map((city) => `<li><a href="${cityUrl(city)}">${city}</a></li>`).join('')}
+</ul></div>`).join('');
+
+const accClustersHtml = DATA.clusters.map((c) => `
+<div class="acc-cl">${c.label}</div>
+<div class="acc-cities">
+${c.cities.map((city) => `<a href="${cityUrl(city)}">${city}</a>`).join('')}
+</div>`).join('');
+
+function siteHeaderHtml() {
+  return `<div class="announce"><div class="awrap">
+<span class="live"><span class="dot"></span><strong>Mobile service active</strong><span class="dim">&middot; Dispatch 35&ndash;45 Min &middot; $0 insurance deductible</span></span>
+<a class="tel" href="tel:${PHONE_RAW}">${ICONS.phone}<span>${PHONE_DISPLAY}</span></a>
+</div></div>
+<header class="site" id="sitehead"><div class="hwrap">
+<a class="brand" href="${BASE}/" aria-label="Chip Zorro Home"><img src="${BASE}/${BRAND_IMG}" alt="Chip Zorro &mdash; Mobile Windshield Chip Repair" /><span class="btext"><span class="name">Chip <span>Zorro</span></span><span class="tag">Mobile Windshield Repair</span></span></a>
+<nav class="desknav" aria-label="Primary">
+<div class="dnav"><a href="${BASE}/#services-section" data-closemega>Services</a></div>
+<div class="dnav"><a href="${BASE}/#how-it-works-section" data-closemega>How It Works</a></div>
+<div class="dnav"><a href="${BASE}/#dispatch" data-closemega>Track Tech</a></div>
+<div class="dnav"><a href="${BASE}/#reviews" data-closemega>Reviews</a></div>
+<div class="dnav"><button id="megabtn" aria-expanded="false" aria-haspopup="true">Service Areas ${ICONS.chevD}</button></div>
+</nav>
+<div class="hactions">
+<a class="btn" href="${BASE}/#booking">${ICONS.zap}Book Repair</a>
+<button class="hamb" id="hamb" aria-label="Open menu" aria-expanded="false">${ICONS.menu}</button>
+</div>
+</div>
+<div class="mega" id="mega"><div class="mega-in">
+<div class="mega-grid">${megaClustersHtml}
+</div>
+<div class="mega-foot">
+<p><strong>${AREA_COUNT} cities served</strong> &middot; $99 flat &middot; Mobile service &mdash; we come to you &middot; $0 insurance deductible</p>
+<a class="vall" href="${BASE}/service-areas/">View all areas ${ICONS.chevR}</a>
+</div>
+</div></div>
+</header>
+<div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div class="mmenu-top">
+<a class="mmenu-brand" href="${BASE}/"><img src="${BASE}/${BRAND_IMG}" alt="" /><span class="mmenu-name">Chip <em>Zorro</em></span></a>
+<button class="mmenu-close" id="mclose" aria-label="Close menu">${ICONS.x}</button>
+</div>
+<nav class="mmenu-nav" aria-label="Mobile"><div class="mmenu-list">
+<a class="mi-row" href="${BASE}/#services-section"><span class="mi">${ICONS.wrench}</span><span class="mt"><span class="ml">Services</span><span class="md">Repairs, pricing &amp; coverage</span></span><span class="arw">${ICONS.chevR}</span></a>
+<a class="mi-row" href="${BASE}/#how-it-works-section"><span class="mi">${ICONS.list}</span><span class="mt"><span class="ml">How It Works</span><span class="md">The 25-minute repair process</span></span><span class="arw">${ICONS.chevR}</span></a>
+<a class="mi-row" href="${BASE}/#dispatch"><span class="mi">${ICONS.pin}</span><span class="mt"><span class="ml">Track Tech</span><span class="md">Live dispatch status</span></span><span class="arw">${ICONS.chevR}</span></a>
+<a class="mi-row" href="${BASE}/#reviews"><span class="mi">${ICONS.star}</span><span class="mt"><span class="ml">Reviews</span><span class="md">Verified customer stories</span></span><span class="arw">${ICONS.chevR}</span></a>
+<div class="acc" id="macc">
+<button class="acc-head" id="maccbtn" aria-expanded="false"><span class="mi">${ICONS.map}</span><span class="mt"><span class="ml">Service Areas</span><span class="md">${AREA_COUNT} cities &middot; $99 mobile repair</span></span><span class="chev">${ICONS.chevD}</span></button>
+<div class="acc-body">${accClustersHtml}
+<a class="acc-all" href="${BASE}/service-areas/">View all ${AREA_COUNT} areas ${ICONS.chevR}</a>
+</div>
+</div>
+</div></nav>
+<div class="mmenu-bottom"><div class="mmenu-bottom-in">
+<a class="mcall" href="tel:${PHONE_RAW}">${ICONS.phone}Call ${PHONE_DISPLAY}</a>
+<a class="mbook" href="${BASE}/#booking">Book Chip Repair</a>
+</div></div>
+</div>
+<script>
+(function(){var head=document.getElementById('sitehead'),mbtn=document.getElementById('megabtn'),mega=document.getElementById('mega'),hamb=document.getElementById('hamb'),mmenu=document.getElementById('mmenu'),mclose=document.getElementById('mclose'),acc=document.getElementById('macc'),accbtn=document.getElementById('maccbtn');function setMega(o){mega.classList.toggle('open',o);mbtn.setAttribute('aria-expanded',o?'true':'false');}function setMenu(o){mmenu.classList.toggle('open',o);hamb.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';if(!o){acc.classList.remove('open');accbtn.setAttribute('aria-expanded','false');}}mbtn.addEventListener('click',function(){setMega(!mega.classList.contains('open'));});mbtn.addEventListener('mouseenter',function(){setMega(true);});mbtn.addEventListener('focus',function(){setMega(true);});head.addEventListener('mouseleave',function(){setMega(false);});Array.prototype.forEach.call(head.querySelectorAll('[data-closemega]'),function(a){a.addEventListener('mouseenter',function(){setMega(false);});});hamb.addEventListener('click',function(){setMenu(true);});mclose.addEventListener('click',function(){setMenu(false);});accbtn.addEventListener('click',function(){var o=!acc.classList.contains('open');acc.classList.toggle('open',o);accbtn.setAttribute('aria-expanded',o?'true':'false');});document.addEventListener('keydown',function(e){if(e.key==='Escape'){setMega(false);setMenu(false);}});})();
+</script>`;
+}
+
+function nearbyCities(name, count = 4) {
+  const cluster = cityCluster[name] || [];
+  return cluster.filter((n) => n !== name).slice(0, count);
+}
+
+function jsonLd(city) {
+  const url = `${BASE}/windshield-chip-repair-${slugify(city)}/`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AutoGlassShop',
+    name: `Chip Zorro \u2014 Windshield Chip Repair in ${city}`,
+    description: `Mobile windshield rock chip repair in ${city}, CA. $99 flat, under 30 minutes, at your location.`,
+    url,
+    telephone: `+1-${PHONE_RAW}`,
+    priceRange: '$99',
+    areaServed: {
+      '@type': 'City',
+      name: city,
+      containedInPlace: { '@type': 'State', name: 'California' },
+    },
+  };
+}
+
+function pageShell({ title, description, canonical, bodyHtml, jsonLdObj, ctaCity }) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>${title}</title>
+<meta name="description" content="${description}" />
+<link rel="canonical" href="${canonical}" />
+<meta property="og:title" content="${title}" />
+<meta property="og:description" content="${description}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="${canonical}" />
+<meta name="robots" content="index, follow" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">${JSON.stringify(jsonLdObj)}</script>
+<style>
+:root{--ember:#f97316;--ember-d:#ea580c;--night:#020617;--paper:#f8fafc}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--night);color:#e2e8f0;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--ember)}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1rem}
+@media(min-width:640px){.wrap{padding:0 1.5rem}}
+/* ---- Unified site header (matches homepage) ---- */
+.announce{background:linear-gradient(90deg,#b94a08 0%,#f97316 50%,#b94a08 100%);color:#fff}
+.announce .awrap{max-width:80rem;margin:0 auto;padding:.45rem 1rem;display:flex;align-items:center;justify-content:center;gap:.9rem;font-size:.62rem;font-weight:700}
+@media(min-width:768px){.announce .awrap{font-size:.68rem}}
+.announce .live{display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap}
+.announce .dot{width:.4rem;height:.4rem;border-radius:999px;background:#6ee7b7;flex-shrink:0}
+.announce .dim{color:rgba(255,255,255,.72);font-weight:600}
+@media(max-width:767px){.announce .dim{display:none}}
+.announce a.tel{display:inline-flex;align-items:center;gap:.4rem;color:#fff;font-weight:800;text-decoration:none;white-space:nowrap}
+.announce a.tel:hover{color:#ffedd5}
+.announce a.tel svg{width:.75rem;height:.75rem}
+header.site{position:sticky;top:0;z-index:50;background:rgba(8,8,13,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.1)}
+.hwrap{max-width:80rem;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.65rem .75rem}
+@media(min-width:640px){.hwrap{padding:.65rem 1.5rem;gap:1rem}}
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;flex-shrink:0}
+.brand img{height:2.5rem;width:auto;display:block;filter:drop-shadow(0 2px 10px rgba(0,0,0,.55))}
+@media(min-width:640px){.brand img{height:3.5rem}}
+.brand .btext{display:flex;flex-direction:column;line-height:1.15}
+.brand .name{font-weight:800;font-size:1rem;color:#fff;letter-spacing:-.02em;white-space:nowrap}
+@media(min-width:640px){.brand .name{font-size:1.25rem}}
+.brand .name span{color:#ff9435}
+.brand .tag{font-size:.56rem;font-weight:700;letter-spacing:.22em;color:#64748b;text-transform:uppercase;white-space:nowrap}
+@media(max-width:639px){.brand .tag{display:none}}
+.desknav{display:none;align-items:center;gap:.25rem}
+@media(min-width:1024px){.desknav{display:flex}}
+.dnav>button,.dnav>a{display:inline-flex;align-items:center;gap:.25rem;padding:.55rem .9rem;border-radius:.55rem;background:transparent;border:0;color:#94a3b8;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;cursor:pointer;white-space:nowrap;font-family:inherit}
+.dnav>button:hover,.dnav>a:hover{color:#fff;background:rgba(255,255,255,.05)}
+.dnav>button[aria-expanded="true"]{color:#fff;background:rgba(255,255,255,.1)}
+.dnav svg{width:.85rem;height:.85rem;transition:transform .2s}
+.dnav>button[aria-expanded="true"] svg{transform:rotate(180deg)}
+.mega{display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#060b18;border-bottom:1px solid rgba(255,255,255,.1);box-shadow:0 30px 60px -15px rgba(0,0,0,.7)}
+.mega.open{display:block}
+.mega-in{max-width:80rem;margin:0 auto;padding:2rem 1.5rem}
+.mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.75rem 1.5rem}
+@media(min-width:1280px){.mega-grid{grid-template-columns:repeat(6,1fr)}}
+.mega-cl{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#ff9435;margin-bottom:.75rem}
+.mega ul{list-style:none}
+.mega li a{display:block;padding:.28rem 0;color:#cbd5e1;font-size:.82rem;font-weight:500;text-decoration:none}
+.mega li a:hover{color:#fff;transform:translateX(2px)}
+.mega-foot{margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.mega-foot p{font-size:.75rem;color:#64748b}
+.mega-foot p strong{color:#cbd5e1}
+.mega-foot a.vall{display:inline-flex;align-items:center;gap:.35rem;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#ff9435;text-decoration:none}
+.mega-foot a.vall:hover{color:#fdba74}
+.mega-foot a.vall svg{width:.85rem;height:.85rem}
+.hactions{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(180deg,#ff9435,#f97316 55%,#e35f0a);color:#fff;font-weight:800;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:.8rem 1.4rem;border-radius:.9rem;border:0;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 24px -8px rgba(249,115,22,.6);white-space:nowrap;flex-shrink:0;font-family:inherit}
+.btn:hover{filter:brightness(1.1)}
+.btn svg{width:.9rem;height:.9rem;color:#fde68a}
+@media(max-width:480px){.btn{padding:.7rem 1rem;font-size:.64rem}}
+.hamb{display:inline-flex;align-items:center;justify-content:center;width:2.5rem;height:2.5rem;border-radius:.75rem;border:0;background:transparent;color:#94a3b8;cursor:pointer;flex-shrink:0}
+.hamb:hover{color:#fff;background:rgba(255,255,255,.1)}
+.hamb svg{width:1.25rem;height:1.25rem}
+@media(min-width:1024px){.hamb{display:none}}
+.mmenu{display:none;position:fixed;inset:0;z-index:100;background:#08080d;flex-direction:column}
+.mmenu.open{display:flex}
+.mmenu-top{display:flex;align-items:center;justify-content:space-between;padding:.65rem .75rem .65rem 1rem;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.mmenu-brand{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.mmenu-brand img{height:2.75rem;width:auto;display:block}
+.mmenu-name{font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.02em}
+.mmenu-name em{font-style:normal;color:#ff9435}
+.mmenu-close{width:2.5rem;height:2.5rem;display:inline-flex;align-items:center;justify-content:center;border-radius:.75rem;border:0;background:transparent;color:#94a3b8;cursor:pointer}
+.mmenu-close:hover{color:#fff;background:rgba(255,255,255,.1)}
+.mmenu-close svg{width:1.25rem;height:1.25rem}
+.mmenu-nav{flex:1;overflow-y:auto;padding:1.5rem 1rem}
+.mmenu-list{max-width:28rem;margin:0 auto;display:grid;gap:.4rem}
+.mi-row{display:flex;align-items:center;gap:1rem;width:100%;padding:1rem;border-radius:1rem;background:transparent;border:1px solid transparent;color:#e2e8f0;text-decoration:none;text-align:left}
+.mi-row:hover{background:rgba(255,255,255,.05)}
+.mmenu.open .mi-row{animation:mi-in .25s ease-out both}
+.mmenu.open .mi-row:nth-child(2){animation-delay:.045s}
+.mmenu.open .mi-row:nth-child(3){animation-delay:.09s}
+.mmenu.open .mi-row:nth-child(4){animation-delay:.135s}
+.mmenu.open .mi-row:nth-child(5){animation-delay:.18s}
+@keyframes mi-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.mi{width:2.75rem;height:2.75rem;border-radius:.8rem;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;color:#94a3b8;flex-shrink:0}
+.mi svg{width:1.1rem;height:1.1rem}
+.mt{flex:1;min-width:0}
+.ml{display:block;color:#e2e8f0;font-weight:700;font-size:1rem}
+.md{display:block;color:#64748b;font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arw{color:#475569;flex-shrink:0}
+.arw svg{width:1.25rem;height:1.25rem;display:block}
+.acc{border:1px solid transparent;border-radius:1rem;overflow:hidden}
+.acc-head{display:flex;align-items:center;gap:1rem;width:100%;padding:1rem;background:transparent;border:0;color:#e2e8f0;cursor:pointer;text-align:left;font-family:inherit}
+.acc-head:hover{background:rgba(255,255,255,.05)}
+.acc-head .chev{margin-left:auto;color:#64748b;transition:transform .2s;flex-shrink:0}
+.acc-head .chev svg{width:1.25rem;height:1.25rem;display:block}
+.acc.open{border-color:rgba(249,115,22,.25);background:rgba(249,115,22,.06)}
+.acc.open .acc-head .chev{transform:rotate(180deg)}
+.acc-body{display:none;padding:0 1rem 1rem}
+.acc.open .acc-body{display:block}
+.acc-cl{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#ff9435;margin:.75rem 0 .4rem;padding:0 .25rem}
+.acc-cities{display:grid;grid-template-columns:1fr 1fr;gap:.25rem}
+.acc-cities a{padding:.55rem .75rem;border-radius:.75rem;font-size:.82rem;font-weight:500;color:#cbd5e1;background:rgba(255,255,255,.05);text-decoration:none}
+.acc-cities a:hover{background:rgba(255,255,255,.1);color:#fff}
+.acc-all{margin-top:.75rem;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.8rem;border-radius:.75rem;font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#ff9435;border:1px solid rgba(249,115,22,.25);text-decoration:none}
+.acc-all svg{width:1rem;height:1rem}
+.mmenu-bottom{padding:1rem 1rem 2rem;border-top:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.mmenu-bottom-in{max-width:28rem;margin:0 auto;display:grid;gap:.65rem}
+.mcall{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.95rem;border-radius:1rem;border:1px solid rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:700;font-size:.9rem}
+.mcall svg{width:1rem;height:1rem;color:#ff9435}
+.mbook{display:block;text-align:center;padding:1rem;border-radius:1rem;background:linear-gradient(180deg,#ff9435,#f97316 55%,#e35f0a);color:#fff;text-decoration:none;font-weight:800;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+.hero{padding:4rem 0 3rem;text-align:center;position:relative;overflow:hidden}
+.hero h1{font-size:2.4rem;line-height:1.08;letter-spacing:-.02em;color:#fff;max-width:44rem;margin:0 auto 1rem}
+@media(min-width:768px){.hero h1{font-size:3.4rem}}
+.hero h1 .hl{color:#fb923c}
+.hero p.lead{color:#94a3b8;font-size:1.05rem;max-width:40rem;margin:0 auto 1.75rem}
+.badges{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:2rem}
+.badge{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fed7aa;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);padding:.5rem 1rem;border-radius:999px}
+section.block{padding:3rem 0}
+section.block h2{font-size:1.7rem;letter-spacing:-.02em;color:#fff;margin-bottom:1rem}
+@media(min-width:768px){section.block h2{font-size:2.1rem}}
+.prose{color:#94a3b8;max-width:46rem}
+.prose p{margin-bottom:1rem}
+.prose strong{color:#e2e8f0}
+.grid3{display:grid;gap:1.25rem;margin-top:1.75rem}
+@media(min-width:768px){.grid3{grid-template-columns:repeat(3,1fr)}}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:1.25rem;padding:1.5rem}
+.card .n{font-weight:800;color:var(--ember);font-size:.8rem;letter-spacing:.12em;margin-bottom:.4rem}
+.card h3{color:#fff;font-size:1.05rem;margin-bottom:.4rem}
+.card p{color:#94a3b8;font-size:.88rem}
+.pricebox{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+.price{flex:1;min-width:240px;border-radius:1.25rem;padding:1.5rem;border:1px solid}
+.price.bad{background:rgba(127,29,29,.25);border-color:rgba(185,28,28,.5)}
+.price.good{background:rgba(6,78,59,.25);border-color:rgba(16,122,87,.5)}
+.price .lbl{font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.3rem}
+.price.bad .lbl{color:#fca5a5}.price.good .lbl{color:#6ee7b7}
+.price .amt{font-size:2.2rem;font-weight:800;color:#fff}
+.price p{font-size:.82rem;color:#94a3b8;margin-top:.5rem}
+.faq{margin-top:1.5rem;display:grid;gap:.8rem}
+.faq details{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:1rem;padding:1.1rem 1.25rem}
+.faq summary{font-weight:700;color:#fff;cursor:pointer;font-size:.95rem}
+.faq details p{color:#94a3b8;font-size:.88rem;margin-top:.6rem}
+.nearby{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.25rem}
+.nearby a{font-size:.82rem;font-weight:600;color:#cbd5e1;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);padding:.55rem 1rem;border-radius:999px}
+.nearby a:hover{border-color:var(--ember);color:#fff}
+.cta{background:linear-gradient(135deg,rgba(249,115,22,.14),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:1.5rem;padding:2.5rem 1.5rem;text-align:center;margin:3rem 0}
+.cta h2{font-size:1.8rem;color:#fff;margin-bottom:.6rem}
+.cta p{color:#94a3b8;margin-bottom:1.5rem}
+footer.site{border-top:1px solid rgba(255,255,255,.08);padding:2.5rem 0;color:#64748b;font-size:.82rem}
+footer.site .wrap{display:flex;flex-direction:column;gap:1rem}
+footer.site nav{display:flex;flex-wrap:wrap;gap:1.25rem}
+footer.site nav a{color:#94a3b8;text-decoration:none}
+footer.site nav a:hover{color:#fff}
+</style>
+</head>
+<body>
+${siteHeaderHtml()}
+<main class="wrap">
+${bodyHtml}
+<div class="cta">
+<h2>Chip in ${ctaCity}? We\u2019ll come to you.</h2>
+<p>$99 flat · Under 30 minutes · Usually within 24 hours · $0 with most insurance</p>
+<a class="btn" href="${BASE}/#booking">Book My $99 Repair</a>
+</div>
+</main>
+<footer class="site"><div class="wrap">
+<nav><a href="${BASE}/">Home</a><a href="${BASE}/#booking">Book Repair</a><a href="${BASE}/service-areas/">All Service Areas</a><a href="tel:${PHONE_RAW}">Call ${PHONE_DISPLAY}</a></nav>
+<div>\u00A9 2026 Chip Zorro \u2014 Mobile Windshield Chip Repair. Repair only; we never replace windshields.</div>
+</div></footer>
+</body>
+</html>`;
+}
+
+function cityBody(city, flavor) {
+  const slug = slugify(city);
+  const nearby = nearbyCities(city)
+    .map((n) => `<a href="${cityUrl(n)}">${n}</a>`)
+    .join('');
+  const intro = `Don\u2019t let a small chip turn into a $900+ windshield replacement. Chip Zorro repairs rock chips on-site across ${city} \u2014 ${flavor} \u2014 with same-week mobile service and a flat $99 price.`;
+
+  return `
+<div class="hero">
+<div class="badges"><span class="badge">$99 flat rate</span><span class="badge">Mobile \u2014 we come to you</span><span class="badge">Under 30 minutes</span></div>
+<h1>Windshield Chip Repair in <span class="hl">${city}</span></h1>
+<p class="lead">${intro}</p>
+<a class="btn" href="${BASE}/#booking">Book Repair in ${city}</a>
+</div>
+
+<section class="block">
+<h2>Mobile rock chip repair, done at your ${city} home or office</h2>
+<div class="prose">
+<p>Chip Zorro is a <strong>repair-only</strong> windshield specialist. We don\u2019t replace windshields and we never upsell them \u2014 every technician is certified at the highest level in resin repair, with <strong>100+ repairs</strong> under their belt before touching your car.</p>
+<p>Our optical vacuum-resin process restores your factory glass in <strong>under 30 minutes</strong>. Your original factory seal stays 100% intact, there\u2019s zero wait to drive afterward, and most insurance covers it at <strong>$0 deductible</strong> with no rate hike.</p>
+</div>
+<div class="grid3">
+<div class="card"><div class="n">STEP 1</div><h3>Book in 60 seconds</h3><p>Tell us your vehicle and damage. Pick a time that works \u2014 we\u2019re usually at your door within 24 hours.</p></div>
+<div class="card"><div class="n">STEP 2</div><h3>We come to you</h3><p>Our van arrives with professional vacuum-injector rigs and UV curing. Home, office, or roadside in ${city}.</p></div>
+<div class="card"><div class="n">STEP 3</div><h3>Drive away cured</h3><p>Resin is UV-cured on the spot. No safe-drive wait like a replacement \u2014 you\u2019re road-ready immediately.</p></div>
+</div>
+</section>
+
+<section class="block">
+<h2>Repair vs. replacement in ${city}</h2>
+<div class="prose"><p>A new windshield for a common truck runs <strong>$899.60 plus tax</strong> at a national chain \u2014 before the day\u2019s wait for glass, 2-hour install, and camera recalibration. Our repair: <strong>$99 flat</strong>.</p></div>
+<div class="pricebox">
+<div class="price bad"><div class="lbl">Full replacement</div><div class="amt">$899.60<span style="font-size:1rem;color:#94a3b8"> + tax</span></div><p>Day+ wait for glass \u00B7 2 hrs install \u00B7 1\u20132 hrs calibration \u00B7 shop visit \u00B7 old glass to landfill</p></div>
+<div class="price good"><div class="lbl">Chip Zorro repair</div><div class="amt">$99<span style="font-size:1rem;color:#94a3b8"> flat</span></div><p>Within 24 hrs \u00B7 under 30 min \u00B7 we come to you \u00B7 factory seal kept \u00B7 drive away immediately</p></div>
+</div>
+</section>
+
+<section class="block">
+<h2>${city} windshield chip repair FAQ</h2>
+<div class="faq">
+<details><summary>How much does chip repair cost in ${city}?</summary><p>$99 flat for any repairable chip or short crack \u2014 bullseye, starburst, combination, or crack under 6 inches. Most insurance covers it at $0 deductible with no rate increase.</p></details>
+<details><summary>Do you really come to me in ${city}?</summary><p>Yes \u2014 we\u2019re fully mobile. Home, office, or wherever your car is parked in ${city}. Most appointments are completed within 24 hours of booking.</p></details>
+<details><summary>How long until I can drive?</summary><p>Immediately. Our UV-cured resin is fully hardened when the technician finishes \u2014 unlike a replacement, there\u2019s no adhesive cure wait.</p></details>
+<details><summary>What if my chip is spreading?</summary><p>Book the urgency lane and we\u2019ll prioritize you. Heat and vibration make chips spread fast \u2014 covering it with clear tape until we arrive helps.</p></details>
+<details><summary>Is repair really better than replacement?</summary><p>For repairable damage, yes: you keep the factory robotic seal, skip calibration fees, pay a fraction of the price, and keep glass out of landfills. We\u2019ll tell you honestly if yours needs replacement instead.</p></details>
+</div>
+</section>
+
+<section class="block">
+<h2>Also serving nearby</h2>
+<div class="prose"><p>Based in North County, we cover the greater San Diego area and beyond:</p></div>
+<div class="nearby">${nearby}<a href="${BASE}/service-areas/">View all ${AREA_COUNT} areas \u2192</a></div>
+</section>
+`;
+}
+
+function indexBody() {
+  const allLinks = CITIES.map(([name]) => `<a href="${cityUrl(name)}">${name}</a>`).join('');
+  return `
+<div class="hero">
+<div class="badges"><span class="badge">${AREA_COUNT} service areas</span><span class="badge">Mobile \u2014 we come to you</span><span class="badge">$99 flat</span></div>
+<h1>Chip Zorro <span class="hl">Service Areas</span></h1>
+<p class="lead">Mobile windshield chip repair across San Diego\u2019s North County, greater San Diego, and Temecula. Pick your city for local booking info.</p>
+</div>
+<section class="block">
+<h2>Where we repair</h2>
+<div class="nearby" style="margin-top:0">${allLinks}</div>
+</section>
+<section class="block">
+<h2>How mobile service works</h2>
+<div class="prose">
+<p>Every Chip Zorro appointment is <strong>fully mobile</strong> \u2014 our vans carry professional vacuum-injector rigs and UV curing systems to your driveway, office, or roadside. Most repairs are completed <strong>within 24 hours</strong> of booking and take <strong>under 30 minutes</strong>.</p>
+<p>One flat <strong>$99</strong> covers any repairable chip or short crack, and most insurance covers it at <strong>$0 deductible</strong> with no rate increase.</p>
+</div>
+<div style="margin-top:1.5rem"><a class="btn" href="${BASE}/#booking">Book My $99 Repair</a></div>
+</section>
+`;
+}
+
+// ---------------- main ----------------
+const urls = [];
+
+// Brand image for static pages
+mkdirSync(join(DIST, 'brand'), { recursive: true });
+copyFileSync(
+  join(__dirname, '..', 'public', 'brand', 'chip_zorro_mark.png'),
+  join(DIST, 'brand', 'chip_zorro_mark.png')
+);
+console.log('Brand image copied to dist/brand/');
+
+for (const [city, flavor] of CITIES) {
+  const slug = slugify(city);
+  const url = `${BASE}/windshield-chip-repair-${slug}/`;
+  const title = `Windshield Chip Repair in ${city}, CA | $99 Mobile \u2014 Chip Zorro`;
+  const description = `Mobile windshield rock chip repair in ${city}, CA. $99 flat, under 30 minutes at your home or office. $0 deductible with most insurance. Book online.`;
+  const html = pageShell({
+    title,
+    description,
+    canonical: url,
+    bodyHtml: cityBody(city, flavor),
+    jsonLdObj: jsonLd(city),
+    ctaCity: city,
+  });
+  const dir = join(DIST, `windshield-chip-repair-${slug}`);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'index.html'), html);
+  urls.push(url);
+}
+
+// Service areas index
+{
+  const url = `${BASE}/service-areas/`;
+  const html = pageShell({
+    title: 'Service Areas | $99 Mobile Windshield Chip Repair \u2014 Chip Zorro',
+    description: `Chip Zorro repairs windshield chips on-site across ${AREA_COUNT} cities in San Diego County and Temecula. $99 flat, mobile service, $0 insurance deductible.`,
+    canonical: url,
+    bodyHtml: indexBody(),
+    jsonLdObj: {
+      '@context': 'https://schema.org',
+      '@type': 'AutoGlassShop',
+      name: 'Chip Zorro \u2014 Mobile Windshield Chip Repair',
+      url: BASE + '/',
+      telephone: `+1-${PHONE_RAW}`,
+      priceRange: '$99',
+      areaServed: DATA.clusters.flatMap((c) => c.cities),
+    },
+    ctaCity: 'your city',
+  });
+  const dir = join(DIST, 'service-areas');
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'index.html'), html);
+  urls.push(url);
+}
+
+// Sitemap
+{
+  const now = new Date().toISOString().slice(0, 10);
+  const entries = [`<url><loc>${BASE}/</loc><lastmod>${now}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>`]
+    .concat(urls.map((u) => `<url><loc>${u}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`))
+    .join('\n');
+  writeFileSync(
+    join(DIST, 'sitemap.xml'),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`
+  );
+  console.log(`Sitemap written with ${urls.length + 1} URLs`);
+}
+
+console.log(`Generated ${urls.length} pages into ${DIST}`);

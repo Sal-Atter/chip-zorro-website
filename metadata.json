@@ -1,0 +1,6 @@
+{
+  "name": "Apex Auto Glass & Windshield Specialist",
+  "description": "Professional mobile windshield repair & replacement service with online scheduling, mobile technician dispatch, customer reviews, automated email confirmations, and Omega EDI claims billing integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: #0f172a;
+    background-color: #f8fafc;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.35s ease-in-out;
+}
+
+/* Resin Injection & UV Polymerization Animations */
+@keyframes resin-flow {
+  0% {
+    transform: scale(0.15);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 3px #f97316);
+  }
+  45% {
+    transform: scale(0.75);
+    opacity: 0.85;
+    filter: drop-shadow(0 0 8px #38bdf8);
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0.15;
+    filter: drop-shadow(0 0 14px #10b981);
+  }
+}
+
+@keyframes uv-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0.2;
+  }
+}
+
+@keyframes vacuum-ring {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+    border-color: rgba(56, 189, 248, 0.95);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    border-color: rgba(249, 115, 22, 0.85);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.9) rotate(360deg);
+    border-color: rgba(16, 185, 129, 0.4);
+    opacity: 0;
+  }
+}
+
+.animate-resin-flow {
+  animation: resin-flow 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-vacuum-ring {
+  animation: vacuum-ring 1.6s ease-out infinite;
+}
+

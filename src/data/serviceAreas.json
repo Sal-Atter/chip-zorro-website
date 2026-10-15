@@ -1,0 +1,66 @@
+{
+  "base": "https://sal-atter.github.io/chip-zorro-website",
+  "clusters": [
+    {
+      "label": "Coastal",
+      "cities": [
+        "Encinitas",
+        "Carlsbad",
+        "Oceanside",
+        "Solana Beach",
+        "Del Mar"
+      ]
+    },
+    {
+      "label": "Inland North County",
+      "cities": [
+        "Escondido",
+        "San Marcos",
+        "Vista",
+        "San Luis Rey",
+        "Twin Oaks",
+        "Bonsall",
+        "Fallbrook"
+      ]
+    },
+    {
+      "label": "East County",
+      "cities": [
+        "Valley Center",
+        "Pauma Valley",
+        "Pala",
+        "Rainbow",
+        "Ramona",
+        "Lakeside",
+        "Santee"
+      ]
+    },
+    {
+      "label": "Central San Diego",
+      "cities": [
+        "Poway",
+        "Rancho Bernardo",
+        "San Diego",
+        "Lake San Marcos",
+        "Hidden Meadows"
+      ]
+    },
+    {
+      "label": "Ranch & Valley Estates",
+      "cities": [
+        "Fairbanks Ranch",
+        "Rancho Santa Fe",
+        "Elfin Forest",
+        "Harmony Grove",
+        "Del Dios",
+        "San Pasqual"
+      ]
+    },
+    {
+      "label": "Temecula Valley",
+      "cities": [
+        "Temecula"
+      ]
+    }
+  ]
+}
