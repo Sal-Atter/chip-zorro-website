@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ember-300: #ffb25e;
+  --color-ember-400: #ff9435;
+  --color-ember-500: #f97316;
+  --color-ember-600: #e35f0a;
+  --color-ember-700: #b94a08;
+  --color-night-950: #08080d;
+  --color-paper-50: #fafaf8;
+  --color-paper-100: #f3f2ee;
+  --font-display: "Bricolage Grotesque", "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+@keyframes menu-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes menu-item-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-menu-in {
+  animation: menu-in 0.18s ease-out;
+}
+
+.animate-menu-item-in {
+  animation: menu-item-in 0.25s ease-out both;
+}
+
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
