@@ -10,6 +10,8 @@
   --color-paper-50: #fafaf8;
   --color-paper-100: #f3f2ee;
   --font-display: "Bricolage Grotesque", "Plus Jakarta Sans", system-ui, sans-serif;
+  --shadow-ember: 0 10px 30px -10px #f973168c;
+  --shadow-card-dark: 0 24px 60px -24px #000000b3;
 }
 
 @keyframes menu-in {
