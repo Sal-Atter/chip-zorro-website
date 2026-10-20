@@ -91,3 +91,88 @@
   };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', start) : start();
 })();
+
+/* Booking email alerts via FormSubmit. Watches chipzorro_bookings in
+   localStorage and emails the owner once per new booking. Bookings that
+   already exist on first run are baselined silently, so seeded/demo data
+   never triggers an alert. Fails silently; never interrupts the site. */
+(() => {
+  'use strict';
+  const ALERT_ENDPOINT = 'https://formsubmit.co/ajax/salar14666@gmail.com';
+  const BOOKINGS_KEY = 'chipzorro_bookings';
+  const SENT_KEY = 'chipzorro_alerted_bookings';
+  const sending = new Set();
+
+  const readBookings = () => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  };
+  const readSent = () => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(SENT_KEY) || 'null');
+      return Array.isArray(parsed) ? new Set(parsed) : null;
+    } catch { return null; }
+  };
+  const saveSent = (set) => {
+    try { localStorage.setItem(SENT_KEY, JSON.stringify([...set])); } catch {}
+  };
+  const text = (v) => (v === undefined || v === null || v === '' ? null : String(v));
+  const vehicleText = (v) => {
+    if (!v) return null;
+    if (typeof v === 'string') return v;
+    return text([v.year, v.make, v.model, v.trim].filter(Boolean).join(' '));
+  };
+  const payloadFor = (b) => {
+    const rows = {
+      _subject: `New Chip Zorro booking ${b.orderNumber || ''} - ${b.customerName || 'customer'}`,
+      _template: 'table',
+      _captcha: 'false',
+      'Order number': text(b.orderNumber),
+      'Customer': text(b.customerName),
+      'Phone': text(b.customerPhone),
+      'Email': text(b.customerEmail),
+      'Address': text([b.address, b.city, b.state, b.zipCode].filter(Boolean).join(', ')),
+      'Vehicle': vehicleText(b.vehicle),
+      'Damage': b.damageType ? `${b.damageType}${b.chipCount ? ` (${b.chipCount} chip${b.chipCount > 1 ? 's' : ''})` : ''}` : null,
+      'Service location': text(b.locationType),
+      'Appointment': text([b.appointmentDate, b.timeSlot].filter(Boolean).join(' ')),
+      'Payment': text(b.paymentMethod),
+      'Insurance carrier': text(b.insuranceCarrier),
+      'Policy number': text(b.insurancePolicyNumber),
+      'Estimated cost': b.estimatedCost != null ? `$${b.estimatedCost}` : null,
+      'Referral code': text(b.referralCode),
+      'Gift card code': text(b.giftCardCode),
+      'Urgent': b.isUrgent ? (text(b.urgencyReason) || 'Yes') : null,
+      'Booked at': text(b.createdAt)
+    };
+    Object.keys(rows).forEach((k) => { if (rows[k] === null) delete rows[k]; });
+    return rows;
+  };
+  const check = () => {
+    try {
+      const bookings = readBookings();
+      if (!bookings.length) return;
+      const sent = readSent();
+      if (sent === null) {
+        saveSent(new Set(bookings.map((b) => b && b.id).filter(Boolean)));
+        return;
+      }
+      bookings.forEach((b) => {
+        if (!b || !b.id || sent.has(b.id) || sending.has(b.id)) return;
+        sending.add(b.id);
+        fetch(ALERT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payloadFor(b))
+        }).then((res) => {
+          if (res.ok) { sent.add(b.id); saveSent(sent); }
+        }).catch(() => {}).finally(() => { sending.delete(b.id); });
+      });
+    } catch {}
+  };
+  check();
+  setInterval(check, 4000);
+  window.addEventListener('storage', (e) => { if (e.key === BOOKINGS_KEY) check(); });
+})();
