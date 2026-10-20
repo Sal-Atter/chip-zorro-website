@@ -176,3 +176,33 @@
   setInterval(check, 4000);
   window.addEventListener('storage', (e) => { if (e.key === BOOKINGS_KEY) check(); });
 })();
+
+/* Booking submit transport for static hosting. The app POSTs the booking
+   form to "/" (a form-capture pattern) and only saves the booking when
+   that POST succeeds. This static host has no form endpoint, so answer
+   that one request locally with success: the booking then saves normally
+   and the FormSubmit alert (above) emails it to the owner. Every other
+   request passes through untouched. */
+(() => {
+  'use strict';
+  if (typeof window.fetch !== 'function') return;
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = (input, init) => {
+    try {
+      const url = typeof input === 'string' ? input : (input && input.url) || '';
+      const method = String((init && init.method) || (input && typeof input === 'object' && input.method) || 'GET').toUpperCase();
+      const body = init && typeof init.body === 'string' ? init.body : '';
+      const path = new URL(url, window.location.href).pathname;
+      const isBookingPost = method === 'POST'
+        && (path === '/' || path === '/chip-zorro-website' || path === '/chip-zorro-website/')
+        && body.includes('form-name=chip-repair-booking');
+      if (isBookingPost) {
+        return Promise.resolve(new Response(JSON.stringify({ ok: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }));
+      }
+    } catch {}
+    return originalFetch(input, init);
+  };
+})();
