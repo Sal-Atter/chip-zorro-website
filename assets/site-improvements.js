@@ -98,7 +98,7 @@
    never triggers an alert. Fails silently; never interrupts the site. */
 (() => {
   'use strict';
-  const ALERT_ENDPOINT = 'https://formsubmit.co/ajax/salar14666@gmail.com';
+  const ALERT_ENDPOINT = 'https://formsubmit.co/ajax/service@chipzorro.com';
   const BOOKINGS_KEY = 'chipzorro_bookings';
   const SENT_KEY = 'chipzorro_alerted_bookings';
   const sending = new Set();
