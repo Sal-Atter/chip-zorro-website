@@ -11,7 +11,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-lake-san-marcos/" />
 <meta name="robots" content="index, follow" />
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"AutoGlassShop","name":"Chip Zorro — Windshield Chip Repair in Lake San Marcos","description":"Mobile windshield rock chip repair in Lake San Marcos, CA. $99 flat, under 30 minutes, at your location.","url":"https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-lake-san-marcos/","telephone":"+1-8005552447","priceRange":"$99","areaServed":{"@type":"City","name":"Lake San Marcos","containedInPlace":{"@type":"State","name":"California"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"AutoGlassShop","name":"Chip Zorro — Windshield Chip Repair in Lake San Marcos","description":"Mobile windshield rock chip repair in Lake San Marcos, CA. $99 flat, under 30 minutes, at your location.","url":"/windshield-chip-repair-lake-san-marcos/","telephone": "+1-858-943-4851","priceRange":"$99","areaServed":{"@type":"City","name":"Lake San Marcos","containedInPlace":{"@type":"State","name":"California"}}}</script>
 <style>
 :root{--ember:#f97316;--ember-d:#ea580c;--night:#020617;--paper:#f8fafc}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -169,51 +169,417 @@ footer.site .wrap{display:flex;flex-direction:column;gap:1rem}
 footer.site nav{display:flex;flex-wrap:wrap;gap:1.25rem}
 footer.site nav a{color:#94a3b8;text-decoration:none}
 footer.site nav a:hover{color:#fff}
+
+/* Enhanced Visual Aesthetics & Badges */
+.hero{background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(249,115,22,0.18),transparent 70%);border-bottom:1px solid rgba(255,255,255,0.06)}
+.trust-strip{display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;margin:1.75rem auto;padding:1rem 1.5rem;background:rgba(15,23,42,0.7);border:1px solid rgba(255,255,255,0.1);border-radius:1rem;max-width:44rem}
+.trust-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;font-weight:700;color:#e2e8f0}
+.trust-item svg{width:1.1rem;height:1.1rem;color:#f97316;flex-shrink:0}
+.trust-item .em{color:#34d399}
+.ins-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-top:1.5rem}
+@media(min-width:640px){.ins-grid{grid-template-columns:repeat(4,1fr)}}
+.ins-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:0.75rem;padding:0.75rem;text-align:center}
+.ins-card strong{display:block;color:#fff;font-size:0.82rem}
+.ins-card span{display:block;color:#34d399;font-size:0.68rem;font-weight:700;margin-top:0.2rem}
+.ba-showcase{margin-top:2rem;display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:768px){.ba-showcase{grid-template-columns:1fr 1fr}}
+.ba-box{background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:1.25rem;padding:1.5rem;position:relative;overflow:hidden}
+.ba-box.before{border-color:rgba(239,68,68,0.3)}
+.ba-box.after{border-color:rgba(16,185,129,0.3)}
+.ba-tag{display:inline-block;padding:0.25rem 0.65rem;border-radius:999px;font-size:0.68rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.75rem}
+.ba-box.before .ba-tag{background:rgba(239,68,68,0.2);color:#fca5a5}
+.ba-box.after .ba-tag{background:rgba(16,185,129,0.2);color:#6ee7b7}
+.ba-box h4{color:#fff;font-size:1.1rem;margin-bottom:0.4rem}
+.ba-box p{color:#94a3b8;font-size:0.85rem;line-height:1.5}
+.guarantee-badge{display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,rgba(249,115,22,0.2),rgba(234,88,12,0.05));border:1px solid rgba(249,115,22,0.4);border-radius:1rem;padding:0.75rem 1.25rem;margin-top:1.5rem}
+.guarantee-badge svg{width:1.5rem;height:1.5rem;color:#f97316;flex-shrink:0}
+.guarantee-badge div{text-align:left}
+.guarantee-badge strong{display:block;color:#fff;font-size:0.82rem}
+.guarantee-badge span{display:block;color:#fdba74;font-size:0.72rem}
+
+
+/* Unified Header Brand Badge */
+.brand-badge{background:#fff;border-radius:0.75rem;padding:0.25rem 0.4rem;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 6px -1px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.15);flex-shrink:0}
+.brand-badge img{height:2.4rem!important;width:auto;display:block}
+@media(min-width:640px){.brand-badge{padding:0.35rem 0.5rem;border-radius:0.9rem}.brand-badge img{height:3rem!important}}
+
+/* Unified Rich 4-Column Footer */
+footer.rich-site{background:#020617;border-top:1px solid rgba(255,255,255,0.08);color:#94a3b8;font-size:0.75rem;padding:3rem 0 2rem}
+.rf-grid{display:grid;grid-template-columns:1fr;gap:2rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+@media(min-width:768px){.rf-grid{grid-template-columns:1.3fr 1fr 1fr 1fr}}
+.rf-col h4{color:#fff;font-size:0.75rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem}
+.rf-col ul{list-style:none;display:grid;gap:0.6rem}
+.rf-col ul li a{color:#94a3b8;text-decoration:none;transition:color 0.15s;font-size:0.8rem}
+.rf-col ul li a:hover{color:#fff}
+.rf-brand{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem}
+.rf-brand .rf-title{color:#fff;font-weight:900;font-size:1.05rem;line-height:1.2}
+.rf-brand .rf-title span{color:#f97316}
+.rf-brand .rf-tag{display:block;font-size:0.56rem;font-weight:800;letter-spacing:0.18em;color:#64748b;text-transform:uppercase}
+.rf-story{color:#64748b;font-size:0.78rem;line-height:1.5;margin-bottom:1rem}
+.rf-trust-points{display:grid;gap:0.4rem;font-size:0.75rem}
+.rf-point{display:flex;align-items:center;gap:0.5rem;color:#cbd5e1}
+.rf-point svg{width:1rem;height:1rem;flex-shrink:0}
+.rf-point.emerald svg{color:#34d399}
+.rf-point.orange svg{color:#f97316}
+.rf-contact{display:grid;gap:0.65rem}
+.rf-c-item{display:flex;align-items:center;gap:0.55rem;color:#cbd5e1;text-decoration:none}
+.rf-c-item svg{width:1rem;height:1rem;color:#f97316;flex-shrink:0}
+.rf-c-item strong{color:#fff}
+.rf-bottom{padding-top:2rem;display:flex;flex-direction:column;gap:1rem;font-size:0.7rem;color:#64748b}
+@media(min-width:768px){.rf-bottom{flex-direction:row;align-items:center;justify-content:space-between}}
+.rf-pills{display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center}
+.rf-pills span{display:inline-flex;align-items:center}
+
+
+/* ---- Professional Design, Performance & Polish: Header & Footer ---- */
+:root {
+  --ember: #f97316;
+  --ember-d: #ea580c;
+  --night: #030712;
+  --slate-dark: #0b1120;
+  --paper: #f8fafc;
+}
+
+/* Announcement Top Bar */
+.announce {
+  background: linear-gradient(90deg, #9a3412 0%, #ea580c 40%, #f97316 70%, #9a3412 100%);
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.announce .awrap {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0.45rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+@media(max-width:639px){
+  .announce .awrap { justify-content: center; font-size: 0.65rem; }
+}
+.announce .live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.announce .dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399;
+  flex-shrink: 0;
+  animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+.announce a.tel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  background: rgba(0,0,0,0.22);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.15s ease;
+}
+.announce a.tel:hover {
+  background: rgba(0,0,0,0.4);
+  color: #ffedd5;
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+}
+.announce a.tel svg { width: 0.85rem; height: 0.85rem; }
+
+/* Sticky Site Header */
+header.site {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(3, 7, 18, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0,0,0,0.5);
+}
+.hwrap {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+}
+@media(min-width:640px){
+  .hwrap { padding: 0.75rem 1.5rem; gap: 1.5rem; }
+}
+
+/* Brand Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.brand-badge {
+  background: #ffffff;
+  border-radius: 0.85rem;
+  padding: 0.3rem 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.brand:hover .brand-badge { transform: scale(1.03); }
+.brand-badge img {
+  height: 2.3rem!important;
+  width: auto;
+  display: block;
+}
+@media(min-width:640px){
+  .brand-badge img { height: 2.85rem!important; }
+}
+.brand .btext { display: flex; flex-direction: column; line-height: 1.15; }
+.brand .name {
+  font-weight: 900;
+  font-size: 1.15rem;
+  color: #fff;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+@media(min-width:640px){ .brand .name { font-size: 1.35rem; } }
+.brand .name span { color: #f97316; }
+.brand .tag {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@media(max-width:639px){ .brand .tag { display: none; } }
+
+/* Desktop Navigation */
+.desknav { display: none; align-items: center; gap: 0.35rem; }
+@media(min-width:1024px){ .desknav { display: flex; } }
+.dnav > button, .dnav > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.65rem;
+  background: transparent;
+  border: 0;
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.dnav > button:hover, .dnav > a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+}
+.dnav > button[aria-expanded="true"] {
+  color: #fff;
+  background: rgba(249,115,22,0.12);
+  border: 1px solid rgba(249,115,22,0.3);
+}
+
+/* Call to Action Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(180deg, #ff9435, #ea580c 60%, #c2410c);
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.75rem 1.4rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  cursor: pointer;
+  box-shadow: 0 4px 16px -2px rgba(234,88,12,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px -2px rgba(234,88,12,0.7), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.btn svg { width: 0.95rem; height: 0.95rem; color: #fef08a; }
+
+/* Unified Rich 4-Column Footer */
+footer.rich-site {
+  background: #020617;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  color: #94a3b8;
+  font-size: 0.8rem;
+  padding: 3.5rem 0 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+footer.rich-site::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(249,115,22,0.4), transparent);
+}
+.rf-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.25rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+@media(min-width:640px){ .rf-grid { grid-template-columns: 1fr 1fr; } }
+@media(min-width:1024px){ .rf-grid { grid-template-columns: 1.4fr 1fr 1fr 1.1fr; } }
+
+.rf-col h4 {
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.15rem;
+}
+.rf-col ul { list-style: none; display: grid; gap: 0.65rem; }
+.rf-col ul li a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  font-size: 0.82rem;
+  display: inline-block;
+}
+.rf-col ul li a:hover {
+  color: #fff;
+  transform: translateX(2px);
+}
+.rf-brand { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem; }
+.rf-brand .rf-title { color: #fff; font-weight: 900; font-size: 1.2rem; line-height: 1.2; }
+.rf-brand .rf-title span { color: #f97316; }
+.rf-brand .rf-tag {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.rf-story {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+.rf-trust-points { display: grid; gap: 0.5rem; font-size: 0.78rem; }
+.rf-point { display: flex; align-items: center; gap: 0.55rem; color: #cbd5e1; }
+.rf-point svg { width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
+.rf-point.emerald svg { color: #34d399; }
+.rf-point.orange svg { color: #f97316; }
+.rf-contact { display: grid; gap: 0.75rem; }
+.rf-c-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.82rem;
+  transition: color 0.15s;
+}
+.rf-c-item:hover { color: #fff; }
+.rf-c-item svg { width: 1.05rem; height: 1.05rem; color: #f97316; flex-shrink: 0; }
+.rf-c-item strong { color: #fff; font-size: 0.95rem; }
+
+.rf-bottom {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+@media(min-width:768px){
+  .rf-bottom { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+.rf-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.rf-pills span { display: inline-flex; align-items: center; }
+
 </style>
 </head>
 <body>
 <div class="announce"><div class="awrap">
 <span class="live"><span class="dot"></span><strong>Mobile service active</strong><span class="dim">&middot; Dispatch 35&ndash;45 Min &middot; $0 insurance deductible</span></span>
-<a class="tel" href="tel:8005552447"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>(800) 555-2447</span></a>
+<a class="tel" href="tel:8589434851"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>(858) 943-4851</span></a>
 </div></div>
 <header class="site" id="sitehead"><div class="hwrap">
-<a class="brand" href="https://sal-atter.github.io/chip-zorro-website/" aria-label="Chip Zorro Home"><img src="https://sal-atter.github.io/chip-zorro-website/brand/chip_zorro_mark.png" alt="Chip Zorro &mdash; Mobile Windshield Chip Repair" /><span class="btext"><span class="name">Chip <span>Zorro</span></span><span class="tag">Mobile Windshield Repair</span></span></a>
+<a class="brand" href="/chip-zorro-website/" aria-label="Chip Zorro Home"><div class="brand-badge"><img src="/chip-zorro-website/brand/chip_zorro_mark.png" alt="Chip Zorro Windshield Repair" /></div><span class="btext"><span class="name">Chip <span>Zorro</span></span><span class="tag">Mobile Windshield Repair</span></span></a>
 <nav class="desknav" aria-label="Primary">
-<div class="dnav"><a href="https://sal-atter.github.io/chip-zorro-website/#services-section" data-closemega>Services</a></div>
-<div class="dnav"><a href="https://sal-atter.github.io/chip-zorro-website/#how-it-works-section" data-closemega>How It Works</a></div>
-<div class="dnav"><a href="https://sal-atter.github.io/chip-zorro-website/#dispatch" data-closemega>Track Tech</a></div>
-<div class="dnav"><a href="https://sal-atter.github.io/chip-zorro-website/#reviews" data-closemega>Reviews</a></div>
+<div class="dnav"><a href="/chip-zorro-website/#services-section" data-closemega>Services & Rates</a></div>
+<div class="dnav"><a href="/chip-zorro-website/#how-it-works-section" data-closemega>How It Works</a></div>
+<div class="dnav"><a href="/chip-zorro-website/#dispatch" data-closemega>Track Tech</a></div>
+<div class="dnav"><a href="/chip-zorro-website/#reviews" data-closemega>Reviews</a></div>
+<div class="dnav"><a href="/chip-zorro-website/#insurance-billing-section" data-closemega style="color:#34d399;font-weight:800;">$0 Insurance Claims</a></div>
 <div class="dnav"><button id="megabtn" aria-expanded="false" aria-haspopup="true">Service Areas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div>
 </nav>
 <div class="hactions">
-<a class="btn" href="https://sal-atter.github.io/chip-zorro-website/#booking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Book Repair</a>
+<a class="btn" href="/chip-zorro-website/#booking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Book Repair</a>
 <button class="hamb" id="hamb" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg></button>
 </div>
 </div>
 <div class="mega" id="mega"><div class="mega-in">
 <div class="mega-grid">
 <div><div class="mega-cl">Coastal</div><ul>
-<li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-encinitas/">Encinitas</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-carlsbad/">Carlsbad</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-oceanside/">Oceanside</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-solana-beach/">Solana Beach</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-del-mar/">Del Mar</a></li>
+<li><a href="/chip-zorro-website/windshield-chip-repair-encinitas/">Encinitas</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-carlsbad/">Carlsbad</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-oceanside/">Oceanside</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-solana-beach/">Solana Beach</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-del-mar/">Del Mar</a></li>
 </ul></div>
 <div><div class="mega-cl">Inland North County</div><ul>
-<li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-escondido/">Escondido</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-marcos/">San Marcos</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-vista/">Vista</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-luis-rey/">San Luis Rey</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-twin-oaks/">Twin Oaks</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-bonsall/">Bonsall</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-fallbrook/">Fallbrook</a></li>
+<li><a href="/chip-zorro-website/windshield-chip-repair-escondido/">Escondido</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-san-marcos/">San Marcos</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-vista/">Vista</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-san-luis-rey/">San Luis Rey</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-twin-oaks/">Twin Oaks</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-bonsall/">Bonsall</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-fallbrook/">Fallbrook</a></li>
 </ul></div>
 <div><div class="mega-cl">East County</div><ul>
-<li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-valley-center/">Valley Center</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-pauma-valley/">Pauma Valley</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-pala/">Pala</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-rainbow/">Rainbow</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-ramona/">Ramona</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-lakeside/">Lakeside</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-santee/">Santee</a></li>
+<li><a href="/chip-zorro-website/windshield-chip-repair-valley-center/">Valley Center</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-pauma-valley/">Pauma Valley</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-pala/">Pala</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-rainbow/">Rainbow</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-ramona/">Ramona</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-lakeside/">Lakeside</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-santee/">Santee</a></li>
 </ul></div>
 <div><div class="mega-cl">Central San Diego</div><ul>
-<li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-poway/">Poway</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-rancho-bernardo/">Rancho Bernardo</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-diego/">San Diego</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-lake-san-marcos/">Lake San Marcos</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-hidden-meadows/">Hidden Meadows</a></li>
+<li><a href="/chip-zorro-website/windshield-chip-repair-poway/">Poway</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-rancho-bernardo/">Rancho Bernardo</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-san-diego/">San Diego</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-lake-san-marcos/">Lake San Marcos</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-hidden-meadows/">Hidden Meadows</a></li>
 </ul></div>
 <div><div class="mega-cl">Ranch & Valley Estates</div><ul>
-<li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-fairbanks-ranch/">Fairbanks Ranch</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-rancho-santa-fe/">Rancho Santa Fe</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-elfin-forest/">Elfin Forest</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-harmony-grove/">Harmony Grove</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-del-dios/">Del Dios</a></li><li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-pasqual/">San Pasqual</a></li>
+<li><a href="/chip-zorro-website/windshield-chip-repair-fairbanks-ranch/">Fairbanks Ranch</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-rancho-santa-fe/">Rancho Santa Fe</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-elfin-forest/">Elfin Forest</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-harmony-grove/">Harmony Grove</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-del-dios/">Del Dios</a></li><li><a href="/chip-zorro-website/windshield-chip-repair-san-pasqual/">San Pasqual</a></li>
 </ul></div>
 <div><div class="mega-cl">Temecula Valley</div><ul>
-<li><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-temecula/">Temecula</a></li>
+<li><a href="/chip-zorro-website/windshield-chip-repair-temecula/">Temecula</a></li>
 </ul></div>
 </div>
 <div class="mega-foot">
 <p><strong>31 cities served</strong> &middot; $99 flat &middot; Mobile service &mdash; we come to you &middot; $0 insurance deductible</p>
-<a class="vall" href="https://sal-atter.github.io/chip-zorro-website/service-areas/">View all areas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+<a class="vall" href="/chip-zorro-website/service-areas/">View all areas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
 </div>
 </div></div>
 </header>
@@ -223,43 +589,44 @@ footer.site nav a:hover{color:#fff}
 <button class="mmenu-close" id="mclose" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 </div>
 <nav class="mmenu-nav" aria-label="Mobile"><div class="mmenu-list">
-<a class="mi-row" href="https://sal-atter.github.io/chip-zorro-website/#services-section"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="mt"><span class="ml">Services</span><span class="md">Repairs, pricing &amp; coverage</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
-<a class="mi-row" href="https://sal-atter.github.io/chip-zorro-website/#how-it-works-section"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><line x1="13" x2="21" y1="6" y2="6"/><line x1="13" x2="21" y1="12" y2="12"/><line x1="13" x2="21" y1="18" y2="18"/></svg></span><span class="mt"><span class="ml">How It Works</span><span class="md">The 25-minute repair process</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
-<a class="mi-row" href="https://sal-atter.github.io/chip-zorro-website/#dispatch"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="mt"><span class="ml">Track Tech</span><span class="md">Live dispatch status</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
-<a class="mi-row" href="https://sal-atter.github.io/chip-zorro-website/#reviews"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="mt"><span class="ml">Reviews</span><span class="md">Verified customer stories</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
+<a class="mi-row" href="/chip-zorro-website/#services-section"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="mt"><span class="ml">Services & Rates</span><span class="md">Pricing, repair limits & coverage</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
+<a class="mi-row" href="/chip-zorro-website/#how-it-works-section"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><line x1="13" x2="21" y1="6" y2="6"/><line x1="13" x2="21" y1="12" y2="12"/><line x1="13" x2="21" y1="18" y2="18"/></svg></span><span class="mt"><span class="ml">How It Works & Care Guide</span><span class="md">Vacuum-resin technology & first aid</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
+<a class="mi-row" href="/chip-zorro-website/#dispatch"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span class="mt"><span class="ml">Track Mobile Tech</span><span class="md">Live dispatch status</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
+<a class="mi-row" href="/chip-zorro-website/#reviews"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="mt"><span class="ml">Customer Reviews</span><span class="md">Verified customer stories</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
+<a class="mi-row" href="/chip-zorro-website/#insurance-billing-section"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="mt"><span class="ml" style="color:#34d399;">$0 Insurance Claims</span><span class="md">Direct electronic clearinghouse billing</span></span><span class="arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span></a>
 <div class="acc" id="macc">
 <button class="acc-head" id="maccbtn" aria-expanded="false"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg></span><span class="mt"><span class="ml">Service Areas</span><span class="md">31 cities &middot; $99 mobile repair</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
 <div class="acc-body">
 <div class="acc-cl">Coastal</div>
 <div class="acc-cities">
-<a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-encinitas/">Encinitas</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-carlsbad/">Carlsbad</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-oceanside/">Oceanside</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-solana-beach/">Solana Beach</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-del-mar/">Del Mar</a>
+<a href="/chip-zorro-website/windshield-chip-repair-encinitas/">Encinitas</a><a href="/chip-zorro-website/windshield-chip-repair-carlsbad/">Carlsbad</a><a href="/chip-zorro-website/windshield-chip-repair-oceanside/">Oceanside</a><a href="/chip-zorro-website/windshield-chip-repair-solana-beach/">Solana Beach</a><a href="/chip-zorro-website/windshield-chip-repair-del-mar/">Del Mar</a>
 </div>
 <div class="acc-cl">Inland North County</div>
 <div class="acc-cities">
-<a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-escondido/">Escondido</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-marcos/">San Marcos</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-vista/">Vista</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-luis-rey/">San Luis Rey</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-twin-oaks/">Twin Oaks</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-bonsall/">Bonsall</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-fallbrook/">Fallbrook</a>
+<a href="/chip-zorro-website/windshield-chip-repair-escondido/">Escondido</a><a href="/chip-zorro-website/windshield-chip-repair-san-marcos/">San Marcos</a><a href="/chip-zorro-website/windshield-chip-repair-vista/">Vista</a><a href="/chip-zorro-website/windshield-chip-repair-san-luis-rey/">San Luis Rey</a><a href="/chip-zorro-website/windshield-chip-repair-twin-oaks/">Twin Oaks</a><a href="/chip-zorro-website/windshield-chip-repair-bonsall/">Bonsall</a><a href="/chip-zorro-website/windshield-chip-repair-fallbrook/">Fallbrook</a>
 </div>
 <div class="acc-cl">East County</div>
 <div class="acc-cities">
-<a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-valley-center/">Valley Center</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-pauma-valley/">Pauma Valley</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-pala/">Pala</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-rainbow/">Rainbow</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-ramona/">Ramona</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-lakeside/">Lakeside</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-santee/">Santee</a>
+<a href="/chip-zorro-website/windshield-chip-repair-valley-center/">Valley Center</a><a href="/chip-zorro-website/windshield-chip-repair-pauma-valley/">Pauma Valley</a><a href="/chip-zorro-website/windshield-chip-repair-pala/">Pala</a><a href="/chip-zorro-website/windshield-chip-repair-rainbow/">Rainbow</a><a href="/chip-zorro-website/windshield-chip-repair-ramona/">Ramona</a><a href="/chip-zorro-website/windshield-chip-repair-lakeside/">Lakeside</a><a href="/chip-zorro-website/windshield-chip-repair-santee/">Santee</a>
 </div>
 <div class="acc-cl">Central San Diego</div>
 <div class="acc-cities">
-<a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-poway/">Poway</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-rancho-bernardo/">Rancho Bernardo</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-diego/">San Diego</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-lake-san-marcos/">Lake San Marcos</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-hidden-meadows/">Hidden Meadows</a>
+<a href="/chip-zorro-website/windshield-chip-repair-poway/">Poway</a><a href="/chip-zorro-website/windshield-chip-repair-rancho-bernardo/">Rancho Bernardo</a><a href="/chip-zorro-website/windshield-chip-repair-san-diego/">San Diego</a><a href="/chip-zorro-website/windshield-chip-repair-lake-san-marcos/">Lake San Marcos</a><a href="/chip-zorro-website/windshield-chip-repair-hidden-meadows/">Hidden Meadows</a>
 </div>
 <div class="acc-cl">Ranch & Valley Estates</div>
 <div class="acc-cities">
-<a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-fairbanks-ranch/">Fairbanks Ranch</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-rancho-santa-fe/">Rancho Santa Fe</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-elfin-forest/">Elfin Forest</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-harmony-grove/">Harmony Grove</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-del-dios/">Del Dios</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-pasqual/">San Pasqual</a>
+<a href="/chip-zorro-website/windshield-chip-repair-fairbanks-ranch/">Fairbanks Ranch</a><a href="/chip-zorro-website/windshield-chip-repair-rancho-santa-fe/">Rancho Santa Fe</a><a href="/chip-zorro-website/windshield-chip-repair-elfin-forest/">Elfin Forest</a><a href="/chip-zorro-website/windshield-chip-repair-harmony-grove/">Harmony Grove</a><a href="/chip-zorro-website/windshield-chip-repair-del-dios/">Del Dios</a><a href="/chip-zorro-website/windshield-chip-repair-san-pasqual/">San Pasqual</a>
 </div>
 <div class="acc-cl">Temecula Valley</div>
 <div class="acc-cities">
-<a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-temecula/">Temecula</a>
+<a href="/chip-zorro-website/windshield-chip-repair-temecula/">Temecula</a>
 </div>
-<a class="acc-all" href="https://sal-atter.github.io/chip-zorro-website/service-areas/">View all 31 areas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+<a class="acc-all" href="/chip-zorro-website/service-areas/">View all 31 areas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
 </div>
 </div>
 </div></nav>
 <div class="mmenu-bottom"><div class="mmenu-bottom-in">
-<a class="mcall" href="tel:8005552447"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Call (800) 555-2447</a>
+<a class="mcall" href="tel:8589434851"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Call (858) 943-4851</a>
 <a class="mbook" href="https://sal-atter.github.io/chip-zorro-website/#booking">Book Chip Repair</a>
 </div></div>
 </div>
@@ -273,6 +640,25 @@ footer.site nav a:hover{color:#fff}
 <h1>Windshield Chip Repair in <span class="hl">Lake San Marcos</span></h1>
 <p class="lead">Chip Zorro is Lake San Marcos’s mobile windshield chip repair specialist, serving the lakeside resort community and surrounding neighborhoods. Skip the shop: we bring the repair to your driveway or workplace and most jobs are done in under 30 minutes for $99 flat.</p>
 <a class="btn" href="https://sal-atter.github.io/chip-zorro-website/#booking">Book Repair in Lake San Marcos</a>
+
+<div class="trust-strip">
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span><strong class="em">$0 Deductible</strong> Approved</span>
+  </div>
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Under <strong>30-Min</strong> Cure</span>
+  </div>
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    <span><strong>5-Star</strong> Rated Techs</span>
+  </div>
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span><strong>Lifetime</strong> Guarantee</span>
+  </div>
+</div>
 </div>
 
 <section class="block">
@@ -297,6 +683,50 @@ footer.site nav a:hover{color:#fff}
 </div>
 </section>
 
+
+<section class="block">
+<h2>Before & After: How Vacuum Resin Saves Factory Glass</h2>
+<div class="prose">
+<p>Unlike retail glue bottles that permanently trap air and haze over, Chip Zorro's negative-pressure vacuum system extracts 100% of trapped air before hydraulic injection of 99% optically transparent polymer.</p>
+</div>
+<div class="ba-showcase">
+  <div class="ba-box before">
+    <span class="ba-tag">Before: Raw Rock Chip</span>
+    <h4>Starburst / Bullseye Fracture</h4>
+    <p>Air-filled jagged fissures reflect sunlight, block visibility, and threaten to snap into multi-foot cracks at any pothole or temperature change.</p>
+  </div>
+  <div class="ba-box after">
+    <span class="ba-tag">After: Chip Zorro Vacuum Cure</span>
+    <h4>95%–99% Optical Clarity</h4>
+    <p>Polymer bonds at the molecular level with matching 1.52 refractive index. Factory structural strength restored, completely safe to drive in under 30 minutes.</p>
+  </div>
+</div>
+<div class="guarantee-badge">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+  <div>
+    <strong>Chip Zorro Lifetime No-Spread Guarantee</strong>
+    <span>If any repair ever spreads, we issue a 100% refund or service credit.</span>
+  </div>
+</div>
+</section>
+
+<section class="block">
+<h2>Direct Insurance Billing — $0 Out-Of-Pocket</h2>
+<div class="prose">
+<p>Most California comprehensive insurance policies waive the glass deductible 100% for mobile rock chip repairs. We process the paperwork directly through national insurance clearinghouses with zero policy rate increase.</p>
+</div>
+<div class="ins-grid">
+  <div class="ins-card"><strong>State Farm</strong><span>100% $0 Deductible</span></div>
+  <div class="ins-card"><strong>GEICO</strong><span>100% $0 Deductible</span></div>
+  <div class="ins-card"><strong>Progressive</strong><span>100% $0 Deductible</span></div>
+  <div class="ins-card"><strong>AAA</strong><span>100% $0 Deductible</span></div>
+  <div class="ins-card"><strong>Farmers</strong><span>100% $0 Deductible</span></div>
+  <div class="ins-card"><strong>Allstate</strong><span>100% $0 Deductible</span></div>
+  <div class="ins-card"><strong>USAA</strong><span>100% $0 Deductible</span></div>
+  <div class="ins-card"><strong>Liberty Mutual</strong><span>100% $0 Deductible</span></div>
+</div>
+</section>
+
 <section class="block">
 <h2>Lake San Marcos windshield chip repair FAQ</h2>
 <div class="faq">
@@ -311,7 +741,7 @@ footer.site nav a:hover{color:#fff}
 <section class="block">
 <h2>Also serving nearby</h2>
 <div class="prose"><p>Based in North County, we cover the greater San Diego area and beyond:</p></div>
-<div class="nearby"><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-poway/">Poway</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-rancho-bernardo/">Rancho Bernardo</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-san-diego/">San Diego</a><a href="https://sal-atter.github.io/chip-zorro-website/windshield-chip-repair-hidden-meadows/">Hidden Meadows</a><a href="https://sal-atter.github.io/chip-zorro-website/service-areas/">View all 31 areas →</a></div>
+<div class="nearby"><a href="/chip-zorro-website/windshield-chip-repair-poway/">Poway</a><a href="/chip-zorro-website/windshield-chip-repair-rancho-bernardo/">Rancho Bernardo</a><a href="/chip-zorro-website/windshield-chip-repair-san-diego/">San Diego</a><a href="/chip-zorro-website/windshield-chip-repair-hidden-meadows/">Hidden Meadows</a><a href="/chip-zorro-website/service-areas/">View all 31 areas →</a></div>
 </section>
 <div class="cta">
 <h2>Chip in Lake San Marcos? We’ll come to you.</h2>
@@ -319,9 +749,82 @@ footer.site nav a:hover{color:#fff}
 <a class="btn" href="https://sal-atter.github.io/chip-zorro-website/#booking">Book My $99 Repair</a>
 </div>
 </main>
-<footer class="site"><div class="wrap">
-<nav><a href="https://sal-atter.github.io/chip-zorro-website/">Home</a><a href="https://sal-atter.github.io/chip-zorro-website/#booking">Book Repair</a><a href="https://sal-atter.github.io/chip-zorro-website/service-areas/">All Service Areas</a><a href="tel:8005552447">Call (800) 555-2447</a></nav>
-<div>© 2026 Chip Zorro — Mobile Windshield Chip Repair. Repair only; we never replace windshields.</div>
+<footer class="rich-site"><div class="wrap">
+<div class="rf-grid">
+  <!-- Col 1: Brand Info -->
+  <div class="rf-col">
+    <div class="rf-brand">
+      <div class="brand-badge" style="padding:0.25rem 0.35rem;"><img src="/chip-zorro-website/brand/chip_zorro_mark.png" alt="Chip Zorro" style="height:2.2rem!important;" /></div>
+      <div>
+        <div class="rf-title">Chip <span>Zorro</span></div>
+        <span class="rf-tag">Windshield Chip Repair</span>
+      </div>
+    </div>
+    <p class="rf-story">
+      We specialize exclusively in mobile rock chip and crack repair. We do NOT replace windshields—we save your original factory glass, safety seal, and camera calibration!
+    </p>
+    <div class="rf-trust-points">
+      <div class="rf-point emerald"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Lifetime No-Spread Guarantee</span></div>
+      <div class="rf-point orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Mobile Dispatch: Mon-Sat 7:30am - 6:30pm</span></div>
+    </div>
+  </div>
+
+  <!-- Col 2: Repair Specializations -->
+  <div class="rf-col">
+    <h4>Repair Services</h4>
+    <ul>
+      <li><a href="/chip-zorro-website/#services-section">Bullseye Rock Chip Repair</a></li>
+      <li><a href="/chip-zorro-website/#services-section">Starburst Micro-Crack Injection</a></li>
+      <li><a href="/chip-zorro-website/#services-section">Combination Break Repair</a></li>
+      <li><a href="/chip-zorro-website/#services-section">Short Crack Stabilization (&lt; 6")</a></li>
+      <li><a href="/chip-zorro-website/#services-section">Multi-Chip Discount Package</a></li>
+    </ul>
+  </div>
+
+  <!-- Col 3: Customer & Insurance -->
+  <div class="rf-col">
+    <h4>Customer & Insurance</h4>
+    <ul>
+      <li><a href="/chip-zorro-website/#booking" style="color:#ff9435;font-weight:700;">Book Chip Repair Online</a></li>
+      <li><a href="/chip-zorro-website/#dispatch">Track Zorro Mobile Van</a></li>
+      <li><a href="/chip-zorro-website/#reviews">Customer Reviews & Ratings</a></li>
+      <li><a href="/chip-zorro-website/#insurance-billing-section">$0 Deductible Direct Claims</a></li>
+      <li><a href="/chip-zorro-website/service-areas/">All 31 Service Areas</a></li>
+    </ul>
+  </div>
+
+  <!-- Col 4: Dispatch Desk -->
+  <div class="rf-col">
+    <h4>Dispatch Desk</h4>
+    <div class="rf-contact">
+      <a class="rf-c-item" href="tel:8589434851">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <strong>(858) 943-4851</strong>
+      </a>
+      <div class="rf-c-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span>dispatch@chipzorro.com</span>
+      </div>
+      <div class="rf-c-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Metro Mobile Fleet · We Come To You!</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Strip -->
+<div class="rf-bottom">
+  <div>© 2026 Chip Zorro Windshield Repair. All rights reserved. <a href="/chip-zorro-website/#admin" style="opacity:0.05;color:#fff;text-decoration:none;">·</a></div>
+  <div class="rf-pills">
+    <span>Specialized In Windshield Chip Repair Only</span>
+    <span>&middot;</span>
+    <span>Electronic Insurance Clearinghouse API</span>
+    <span>&middot;</span>
+    <span>Zero Replacement Upsells</span>
+  </div>
+</div>
 </div></footer>
 </body>
 </html>
+

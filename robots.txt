@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://thunderous-buttercream-51397c.netlify.app/sitemap.xml
+Sitemap: https://sal-atter.github.io/chip-zorro-website/sitemap.xml
