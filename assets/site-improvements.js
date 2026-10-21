@@ -206,3 +206,63 @@
     return originalFetch(input, init);
   };
 })();
+
+/* Booking sync to the Chip Zorro database (Hostinger). Watches
+   chipzorro_bookings and POSTs each new booking once to the owner's
+   endpoint, which stores it in MySQL. Baselined silently on first run,
+   like the FormSubmit alerts, so existing bookings never flood the
+   database. Fails silently; never interrupts the site. */
+(() => {
+  'use strict';
+  const DB_ENDPOINT = 'https://chipzorro.com/api/booking.php';
+  const DB_TOKEN = 'ueyrEUDL50bQRJLNfzd4e3WEb6ru6kjB';
+  const BOOKINGS_KEY = 'chipzorro_bookings';
+  const SENT_KEY = 'chipzorro_db_bookings';
+  const sending = new Set();
+
+  const readBookings = () => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  };
+  const readSent = () => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(SENT_KEY) || 'null');
+      return Array.isArray(parsed) ? new Set(parsed) : null;
+    } catch { return null; }
+  };
+  const saveSent = (set) => {
+    try { localStorage.setItem(SENT_KEY, JSON.stringify([...set])); } catch {}
+  };
+  const check = () => {
+    try {
+      const bookings = readBookings();
+      if (!bookings.length) return;
+      const sent = readSent();
+      if (sent === null) {
+        saveSent(new Set(bookings.map((b) => b && b.id).filter(Boolean)));
+        return;
+      }
+      bookings.forEach((b) => {
+        if (!b || !b.id || sent.has(b.id) || sending.has(b.id)) return;
+        sending.add(b.id);
+        fetch(DB_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CZ-Token': DB_TOKEN },
+          body: JSON.stringify(b),
+          keepalive: true
+        }).then((res) => {
+          sending.delete(b.id);
+          if (res && res.ok) {
+            const now = readSent() || new Set();
+            now.add(b.id);
+            saveSent(now);
+          }
+        }).catch(() => { sending.delete(b.id); });
+      });
+    } catch {}
+  };
+  setInterval(check, 4000);
+  check();
+})();
