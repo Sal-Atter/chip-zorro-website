@@ -737,7 +737,13 @@
       });
       groups.forEach(g => {
         const any = [...g.querySelectorAll('a[href*="windshield-chip-repair-"]')].some(a => a.style.display !== 'none');
-        g.style.display = any ? '' : 'none';
+        let wrap = g;
+        const parent = g.parentElement;
+        if (parent && parent !== panelRoot &&
+            parent.querySelectorAll('a[href*="windshield-chip-repair-"]').length === g.querySelectorAll('a[href*="windshield-chip-repair-"]').length) {
+          wrap = parent;
+        }
+        wrap.style.display = any ? '' : 'none';
       });
       updateCount();
     });

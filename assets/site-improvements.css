@@ -110,3 +110,12 @@ h1.cz-hero-title span { font-style:italic; }
 .cz-sa-count { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; color:#f97316; white-space:nowrap; }
 .cz-mobile-group-label { font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.22em; color:#7d8aa0; padding:18px 4px 8px; }
 @media (max-width:1023px) { .cz-mega { display:none; } }
+/* Nav tightening so the added Ways to Save item never pushes BOOK REPAIR
+   off-screen at laptop widths. */
+@media (max-width:1440px) {
+  header nav[aria-label="Primary"] { gap:0 !important; }
+  header nav[aria-label="Primary"] > button { padding-left:9px !important; padding-right:9px !important; letter-spacing:.09em !important; }
+}
+@media (max-width:1240px) {
+  header nav[aria-label="Primary"] > button { padding-left:7px !important; padding-right:7px !important; }
+}
