@@ -73,7 +73,7 @@ button, a, input, select, textarea { touch-action: manipulation; }
 
 /* Hero header redesign (Option 1, approved 2026-10-20): poster headline,
    mono kicker, rating lockup. */
-h1.cz-hero-title { font-size:clamp(3.1rem,5.6vw,5.3rem) !important; line-height:.99 !important; letter-spacing:-.02em !important; }
+h1.cz-hero-title { font-size:clamp(3.1rem,4.9vw,4.35rem) !important; line-height:.99 !important; letter-spacing:-.02em !important; }
 h1.cz-hero-title span { font-style:italic; }
 .cz-hero-kicker { display:flex; align-items:center; gap:12px; margin-bottom:22px; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.22em; color:#cbd5e1; }
 .cz-hero-kicker-rule { display:inline-block; width:36px; height:2px; background:#f65013; flex-shrink:0; }
