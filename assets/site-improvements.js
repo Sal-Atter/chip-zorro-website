@@ -535,3 +535,271 @@
   new MutationObserver(() => apply()).observe(document.documentElement, { childList: true, subtree: true });
   apply();
 })();
+
+/* Advanced mega menu (approved 2026-10-20). Adds dropdown panels to the
+   desktop Services and How It Works nav items, a new Ways to Save nav item
+   with its own panel, a live search inside the existing Service Areas
+   panel, and Guides/Ways-to-Save groups in the mobile full-screen menu.
+   Everything is enhancement-owned DOM injected around the bundle header;
+   idempotent and re-applied via observer after React re-renders. */
+(() => {
+  const ORANGE = '#f97316';
+  const siteRoot = () => location.pathname.startsWith('/chip-zorro-website') ? '/chip-zorro-website' : '';
+  const assetBase = () => {
+    const img = document.querySelector('header img');
+    if (img && img.src) { const m = img.src.match(/^(.*\/assets\/)/); if (m) return m[1]; }
+    return siteRoot() + '/assets/';
+  };
+  let closeTimer = null;
+  const panels = () => document.querySelectorAll('.cz-mega');
+  const closeAll = () => panels().forEach(p => p.classList.remove('cz-open'));
+  const openPanel = (name) => {
+    clearTimeout(closeTimer);
+    panels().forEach(p => p.classList.toggle('cz-open', p.dataset.panel === name));
+  };
+  const scheduleClose = () => { clearTimeout(closeTimer); closeTimer = setTimeout(closeAll, 220); };
+
+  const goSection = (id) => {
+    closeAll();
+    const tryScroll = () => {
+      const el = document.getElementById(id);
+      if (!el) return false;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => window.scrollBy(0, -104), 480);
+      return true;
+    };
+    if (tryScroll()) return;
+    const logo = document.querySelector('header img');
+    const clickTarget = logo && (logo.closest('a') || logo.closest('button'));
+    if (clickTarget) clickTarget.click();
+    let n = 0;
+    const iv = setInterval(() => { if (tryScroll() || ++n > 25) clearInterval(iv); }, 120);
+  };
+  const bookNow = () => {
+    closeAll();
+    const btns = document.querySelectorAll('header button');
+    for (const b of btns) if (b.textContent.includes('BOOK REPAIR')) { b.click(); return; }
+  };
+
+  const link = (go, title, sub, extra) =>
+    `<a class="cz-mega-link" data-go="${go}"><span><b>${title}${extra || ''}</b><small>${sub}</small></span><span class="cz-mega-arrow">→</span></a>`;
+  const NEW = '<span class="cz-new-tag">NEW</span>';
+
+  const buildPanels = (header) => {
+    if (document.querySelector('.cz-mega')) return;
+    const base = assetBase();
+    const plate = (file, name, sub) =>
+      `<a class="cz-mega-link" data-go="services-section"><img class="cz-plate-thumb" src="${base}${file}" alt=""><span><b>${name}</b><small>${sub}</small></span><span class="cz-mega-arrow">→</span></a>`;
+    const services = document.createElement('div');
+    services.className = 'cz-mega'; services.dataset.panel = 'services';
+    services.innerHTML = `<div class="cz-mega-grid" style="grid-template-columns:1.15fr 1fr .92fr;">
+      <div><div class="cz-mega-label">REPAIRS — FIELD GUIDE</div>
+        ${plate('damage-bullseye.svg', 'Bullseye chip', 'Round chip with a ring · FIG. 1')}
+        ${plate('damage-starburst.svg', 'Starburst chip', 'Cracks spread like a star · FIG. 2')}
+        ${plate('damage-combination.svg', 'Combination break', 'Chip with branching cracks · FIG. 3')}
+        ${plate('damage-short-crack.svg', 'Short crack', 'Lines under 6 inches · FIG. 4')}
+      </div>
+      <div><div class="cz-mega-label">GUIDES & TOOLS</div>
+        ${link('diagnostic-section', 'Photo Chip Check', 'See if your damage can be repaired', NEW)}
+        ${link('windshield-guide-section', 'Repair vs. Replace', 'Why a $99 repair beats a $900 replacement', NEW)}
+        ${link('faq-section', 'FAQ & Warranty', 'Eligibility, insurance and the no-spread guarantee')}
+        ${link('insurance-billing-section', 'Insurance Claims Desk', 'Coverage depends on your policy — we check first')}
+      </div>
+      <div class="cz-rail"><div class="cz-mega-label" style="color:#fdba74;">FLAT-RATE REPAIR</div>
+        <div class="cz-rail-price">$99</div>
+        <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:8px 0 16px;">Per chip, at your home or work.<br>Additional chips +$30. Never a replacement upsell.</p>
+        <button data-book="1" style="width:100%;background:${ORANGE};color:#fff;font-weight:800;font-size:13.5px;border:none;border-radius:11px;padding:12px;cursor:pointer;letter-spacing:.02em;">BOOK REPAIR</button>
+        <a href="tel:+18589434851" style="display:block;text-align:center;margin-top:12px;color:#fff;font-weight:700;font-size:13.5px;text-decoration:none;">(858) 943-4851</a>
+      </div></div>`;
+    const how = document.createElement('div');
+    how.className = 'cz-mega'; how.dataset.panel = 'how';
+    const step = (n, t, s) => `<div class="cz-step"><span class="cz-step-num">${n}</span><span><b style="display:block;font-size:14.5px;color:#fff;">${t}</b><small style="font-size:12px;color:#94a3b8;">${s}</small></span></div>`;
+    how.innerHTML = `<div class="cz-mega-grid" style="grid-template-columns:1.5fr 1fr;">
+      <div><div class="cz-mega-label">HOW IT WORKS — ABOUT 25 MINUTES</div>
+        <div style="display:grid;gap:18px;">
+          ${step('01', 'Request a visit', 'Book online or call — we confirm availability, eligibility and price first.')}
+          ${step('02', 'We come to you', 'A technician arrives at your home or workplace with the repair kit.')}
+          ${step('03', 'Get it repaired', 'Resin repair, UV-cured. You keep your factory windshield and seal.')}
+        </div></div>
+      <div><div class="cz-mega-label">MORE</div>
+        <a class="cz-mega-link" href="${siteRoot()}/how-windshield-repair-works/"><span><b>Full Repair Guide</b><small>How windshield repair works, step by step</small></span><span class="cz-mega-arrow">→</span></a>
+        ${link('insurance-billing-section', 'Insurance Claims Desk', 'Check your policy before we file')}
+        <p style="font-size:12px;color:#94a3b8;line-height:1.65;margin-top:14px;">Every repair is covered by the Lifetime No-Spread Guarantee.</p>
+      </div></div>`;
+    const save = document.createElement('div');
+    save.className = 'cz-mega'; save.dataset.panel = 'save';
+    const card = (go, t, s) => `<a class="cz-save-card" data-go="${go}"><b style="display:block;font-size:16px;color:#fff;">${t}</b><small style="display:block;font-size:12.5px;color:#94a3b8;margin-top:5px;line-height:1.55;">${s}</small><span class="cz-mega-arrow" style="display:inline-block;margin-top:12px;">→</span></a>`;
+    save.innerHTML = `<div class="cz-mega-label">WAYS TO SAVE</div>
+      <div class="cz-mega-grid" style="grid-template-columns:repeat(3,1fr);">
+        ${card('referral-section', 'Refer a Friend — $10', 'Give $10, get $10. Share your code and you both save on a repair.')}
+        ${card('gift-cards-section', 'Gift Cards', '$25, $50 or a full $99 repair — the gift of a clear windshield.')}
+        ${card('insurance-billing-section', 'Insurance Claims', 'Many policies cover chip repair. We confirm your coverage first.')}
+      </div>`;
+    [services, how, save].forEach(p => {
+      p.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+      p.addEventListener('mouseleave', scheduleClose);
+      p.addEventListener('click', (e) => {
+        const go = e.target.closest('[data-go]');
+        if (go) { e.preventDefault(); goSection(go.dataset.go); }
+        if (e.target.closest('[data-book]')) bookNow();
+      });
+      header.appendChild(p);
+    });
+  };
+
+  const wireNav = (header) => {
+    const nav = header.querySelector('nav[aria-label="Primary"]');
+    if (!nav) return;
+    const byText = (txt) => [...nav.querySelectorAll('button')].find(b => b.textContent.replace('▾', '').trim() === txt);
+    const wire = (btn, name) => {
+      if (!btn || btn.dataset.czWired) return;
+      btn.dataset.czWired = name;
+      if (!btn.querySelector('.cz-chev')) {
+        const c = document.createElement('span'); c.className = 'cz-chev'; c.textContent = '▾'; btn.appendChild(c);
+      }
+      btn.addEventListener('mouseenter', () => openPanel(name));
+      btn.addEventListener('mouseleave', scheduleClose);
+      btn.addEventListener('focus', () => openPanel(name));
+      btn.addEventListener('click', () => setTimeout(closeAll, 60));
+    };
+    wire(byText('Services'), 'services');
+    wire(byText('How It Works'), 'how');
+    const saBtn = byText('Service Areas');
+    if (saBtn && !saBtn.dataset.czSaWired) {
+      saBtn.dataset.czSaWired = '1';
+      saBtn.addEventListener('mouseenter', closeAll);
+      saBtn.addEventListener('focus', closeAll);
+    }
+    if (!nav.querySelector('[data-cz-ways]')) {
+      const tmpl = byText('Services');
+      if (tmpl && saBtn) {
+        const w = document.createElement('button');
+        w.type = 'button';
+        w.className = tmpl.className;
+        w.dataset.czWays = '1';
+        w.innerHTML = 'Ways to Save' + '<span class="cz-new-tag">NEW</span><span class="cz-chev">▾</span>';
+        w.addEventListener('mouseenter', () => openPanel('save'));
+        w.addEventListener('mouseleave', scheduleClose);
+        w.addEventListener('focus', () => openPanel('save'));
+        w.addEventListener('click', () => {
+          const p = document.querySelector('.cz-mega[data-panel="save"]');
+          if (p) p.classList.toggle('cz-open');
+        });
+        nav.insertBefore(w, saBtn);
+      }
+    }
+    if (!header.dataset.czLeave) {
+      header.dataset.czLeave = '1';
+      header.addEventListener('mouseleave', closeAll);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+      window.addEventListener('scroll', () => closeAll(), { passive: true });
+    }
+  };
+
+  const injectSASearch = (header) => {
+    const divs = header.querySelectorAll('div');
+    let panelRoot = null, best = Infinity;
+    for (const d of divs) {
+      const links = d.querySelectorAll('a[href*="windshield-chip-repair-"]').length;
+      if (links >= 15 && d.textContent.includes('cities served') && d.querySelectorAll('*').length < best) {
+        panelRoot = d; best = d.querySelectorAll('*').length;
+      }
+    }
+    if (!panelRoot || panelRoot.querySelector('.cz-sa-search')) return;
+    const bar = document.createElement('div');
+    bar.className = 'cz-sa-search';
+    bar.innerHTML = `<input type="text" placeholder="Search your city…" aria-label="Search service areas"><span class="cz-sa-count"></span>`;
+    panelRoot.prepend(bar);
+    const input = bar.querySelector('input');
+    const count = bar.querySelector('.cz-sa-count');
+    const cityLinks = () => [...panelRoot.querySelectorAll('a[href*="windshield-chip-repair-"]')];
+    const groupOf = (a) => {
+      let n = a;
+      while (n.parentElement && n.parentElement !== panelRoot) {
+        n = n.parentElement;
+        if (n.querySelectorAll('a[href*="windshield-chip-repair-"]').length >= 2) return n;
+      }
+      return null;
+    };
+    const updateCount = () => {
+      const total = cityLinks().length;
+      const q = input.value.trim().toLowerCase();
+      const vis = cityLinks().filter(a => a.style.display !== 'none').length;
+      count.textContent = q ? `${vis} ${vis === 1 ? 'CITY' : 'CITIES'} MATCH` : `${total} CITIES`;
+    };
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      const groups = new Set();
+      cityLinks().forEach(a => {
+        const hit = !q || a.textContent.toLowerCase().includes(q);
+        a.style.display = hit ? '' : 'none';
+        const g = groupOf(a); if (g) groups.add(g);
+      });
+      groups.forEach(g => {
+        const any = [...g.querySelectorAll('a[href*="windshield-chip-repair-"]')].some(a => a.style.display !== 'none');
+        g.style.display = any ? '' : 'none';
+      });
+      updateCount();
+    });
+    input.addEventListener('click', (e) => e.stopPropagation());
+    updateCount();
+  };
+
+  const injectMobileGroups = () => {
+    const candidates = document.querySelectorAll('body > div, body > section');
+    for (const root of candidates) {
+      if (root.closest('header')) continue;
+      const cls = root.className || '';
+      if (typeof cls !== 'string' || !cls.includes('inset-0')) continue;
+      if (!root.textContent.includes('Track Tech')) continue;
+      if (root.querySelector('[data-cz-mobile-groups]')) return;
+      const anchor = [...root.querySelectorAll('button')].find(b => b.textContent.includes('Reviews'));
+      if (!anchor) return;
+      const list = anchor.parentElement;
+      const wrap = document.createElement('div');
+      wrap.dataset.czMobileGroups = '1';
+      const row = (label, desc, go, href) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = anchor.className; b.style.textAlign = 'left';
+        b.innerHTML = `<span style="display:block;"><b style="display:block;font-size:15px;color:#fff;">${label}</b><small style="display:block;font-size:12px;color:#94a3b8;margin-top:2px;">${desc}</small></span>`;
+        b.addEventListener('click', () => {
+          const closeBtn = [...root.querySelectorAll('button')].find(x => !x.textContent.trim() && x !== b);
+          if (closeBtn) closeBtn.click();
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          setTimeout(() => { if (href) location.href = href; else goSection(go); }, 90);
+        });
+        return b;
+      };
+      const label = (t) => { const d = document.createElement('div'); d.className = 'cz-mobile-group-label'; d.textContent = t; return d; };
+      wrap.appendChild(label('GUIDES & TOOLS'));
+      wrap.appendChild(row('Photo Chip Check', 'See if your damage can be repaired', 'diagnostic-section'));
+      wrap.appendChild(row('Repair vs. Replace', 'Why repair beats replacement', 'windshield-guide-section'));
+      wrap.appendChild(row('Care Guide', 'How windshield repair works', null, siteRoot() + '/how-windshield-repair-works/'));
+      wrap.appendChild(row('FAQ & Warranty', 'Eligibility and the no-spread guarantee', 'faq-section'));
+      wrap.appendChild(label('WAYS TO SAVE'));
+      wrap.appendChild(row('Refer a Friend — $10', 'Give $10, get $10', 'referral-section'));
+      wrap.appendChild(row('Gift Cards', '$25, $50 or a full $99 repair', 'gift-cards-section'));
+      wrap.appendChild(row('Insurance Claims', 'Check your policy coverage', 'insurance-billing-section'));
+      list.appendChild(wrap);
+      return;
+    }
+  };
+
+  let queued = false;
+  const init = () => {
+    try {
+      const header = document.querySelector('header');
+      if (!header) return;
+      buildPanels(header);
+      wireNav(header);
+      injectSASearch(header);
+      injectMobileGroups();
+    } catch {}
+  };
+  const schedule = () => {
+    if (queued) return; queued = true;
+    requestAnimationFrame(() => { queued = false; init(); });
+  };
+  new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+  init();
+})();
