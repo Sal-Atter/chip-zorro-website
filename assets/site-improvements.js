@@ -266,3 +266,100 @@
   setInterval(check, 4000);
   check();
 })();
+
+/* Live Bookings tab inside the built-in admin. Adds an eighth tab,
+   "Live Bookings", next to the existing tabs; it embeds the owner's
+   database admin (chipzorro.com/admin) in the content area. The tab is
+   a clone of an existing tab button, so it inherits the exact compiled
+   styling. React's own tabs keep working untouched: clicking any of
+   them hides the live panel again. Fails silently. */
+(() => {
+  'use strict';
+  const IFRAME_SRC = 'https://chipzorro.com/admin/';
+  const ACTIVE_CLASSES = ['bg-orange-600', 'text-white', 'shadow-sm'];
+  const INACTIVE_CLASSES = ['text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800/60'];
+  let myTab = null;
+  let myPanel = null;
+  let iframe = null;
+  let isActive = false;
+
+  const setBtnState = (btn, on) => {
+    if (!btn) return;
+    ACTIVE_CLASSES.forEach((c) => btn.classList.toggle(c, on));
+    INACTIVE_CLASSES.forEach((c) => btn.classList.toggle(c, !on));
+  };
+  const tabButtons = (tabBar) => [...tabBar.querySelectorAll('button')];
+  const findTabBar = () => {
+    const dash = [...document.querySelectorAll('button')]
+      .find((b) => b.textContent.trim().startsWith('Dashboard Overview'));
+    return dash ? dash.parentElement : null;
+  };
+  const findMain = (tabBar) => {
+    let node = tabBar;
+    for (let i = 0; i < 4 && node; i += 1) {
+      const main = node.querySelector(':scope > main');
+      if (main) return main;
+      node = node.parentElement;
+    }
+    return null;
+  };
+  const deactivate = () => {
+    if (!isActive) return;
+    isActive = false;
+    setBtnState(myTab, false);
+    if (myPanel) myPanel.style.display = 'none';
+    const tabBar = myTab && myTab.parentElement;
+    const main = tabBar && findMain(tabBar);
+    if (main) main.style.display = '';
+  };
+  const activate = () => {
+    const tabBar = myTab && myTab.parentElement;
+    if (!tabBar) return;
+    const main = findMain(tabBar);
+    if (!main || !myPanel) return;
+    isActive = true;
+    tabButtons(tabBar).forEach((b) => { if (b !== myTab) setBtnState(b, false); });
+    setBtnState(myTab, true);
+    main.style.display = 'none';
+    myPanel.style.display = '';
+    if (iframe && !iframe.getAttribute('src')) iframe.setAttribute('src', IFRAME_SRC);
+  };
+  const inject = () => {
+    try {
+      const tabBar = findTabBar();
+      if (!tabBar) return;
+      if (myTab && myTab.parentElement === tabBar && myPanel && myPanel.isConnected) return;
+      const main = findMain(tabBar);
+      if (!main) return;
+      const dash = tabButtons(tabBar)
+        .find((b) => b.textContent.trim().startsWith('Dashboard Overview'));
+      if (!dash) return;
+      myTab = dash.cloneNode(true);
+      myTab.removeAttribute('id');
+      const label = myTab.querySelector('span');
+      if (label) label.textContent = 'Live Bookings';
+      setBtnState(myTab, false);
+      myTab.addEventListener('click', activate);
+      const bookingsBtn = tabButtons(tabBar)
+        .find((b) => b.textContent.includes('Bookings & Work Orders'));
+      if (bookingsBtn) bookingsBtn.after(myTab); else tabBar.appendChild(myTab);
+      myPanel = document.createElement('section');
+      myPanel.id = 'cz-live-panel';
+      myPanel.className = main.className;
+      myPanel.style.display = 'none';
+      iframe = document.createElement('iframe');
+      iframe.title = 'Chip Zorro live bookings admin';
+      iframe.style.cssText = 'width:100%;height:calc(100dvh - 190px);min-height:480px;border:0;border-radius:12px;background:#f7f6f2;';
+      myPanel.appendChild(iframe);
+      main.after(myPanel);
+      isActive = false;
+      tabBar.addEventListener('click', (ev) => {
+        const btn = ev.target.closest('button');
+        if (btn && btn !== myTab) deactivate();
+      });
+    } catch {}
+  };
+  const observer = new MutationObserver(() => { inject(); });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  inject();
+})();
