@@ -51,7 +51,7 @@ button, a, input, select, textarea { touch-action: manipulation; }
 .cz-damage-heading>p { color:#475569; font-size:16px; line-height:1.75; margin-top:18px; max-width:70ch; }
 .cz-damage-examples { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px; }
 .cz-damage-examples figure { margin:0; min-width:0; }
-.cz-damage-glass { border-radius:18px; overflow:hidden; background:#152738; border:1px solid #233e50; box-shadow:0 12px 22px -16px #0f172a70; }
+.cz-damage-glass { border-radius:18px; overflow:hidden; background:#faf6ee; border:1px solid #e3dac4; box-shadow:0 12px 22px -16px #0f172a70; }
 .cz-damage-glass img { display:block; width:100%; height:auto; aspect-ratio:360/250; }
 .cz-damage-examples figcaption { padding:20px 2px 0; }
 .cz-damage-examples h3 { font-family:'Bricolage Grotesque',sans-serif; font-size:21px; line-height:1.2; font-weight:700; margin-bottom:10px; }
