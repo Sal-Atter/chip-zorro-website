@@ -727,24 +727,34 @@
       const vis = cityLinks().filter(a => a.style.display !== 'none').length;
       count.textContent = q ? `${vis} ${vis === 1 ? 'CITY' : 'CITIES'} MATCH` : `${total} CITIES`;
     };
+    const findColumns = () => {
+      const divs = panelRoot.querySelectorAll('div');
+      for (const d of divs) {
+        const kids = [...d.children].filter(c => c.querySelectorAll && c.querySelectorAll('a[href*="windshield-chip-repair-"]').length >= 1);
+        if (kids.length >= 3) return kids;
+      }
+      return null;
+    };
     input.addEventListener('input', () => {
       const q = input.value.trim().toLowerCase();
-      const groups = new Set();
       cityLinks().forEach(a => {
         const hit = !q || a.textContent.toLowerCase().includes(q);
         a.style.display = hit ? '' : 'none';
-        const g = groupOf(a); if (g) groups.add(g);
       });
-      groups.forEach(g => {
-        const any = [...g.querySelectorAll('a[href*="windshield-chip-repair-"]')].some(a => a.style.display !== 'none');
-        let wrap = g;
-        const parent = g.parentElement;
-        if (parent && parent !== panelRoot &&
-            parent.querySelectorAll('a[href*="windshield-chip-repair-"]').length === g.querySelectorAll('a[href*="windshield-chip-repair-"]').length) {
-          wrap = parent;
-        }
-        wrap.style.display = any ? '' : 'none';
-      });
+      const cols = findColumns();
+      if (cols) {
+        cols.forEach(col => {
+          const any = [...col.querySelectorAll('a[href*="windshield-chip-repair-"]')].some(a => a.style.display !== 'none');
+          col.style.display = any ? '' : 'none';
+        });
+      } else {
+        const groups = new Set();
+        cityLinks().forEach(a => { const g = groupOf(a); if (g) groups.add(g); });
+        groups.forEach(g => {
+          const any = [...g.querySelectorAll('a[href*="windshield-chip-repair-"]')].some(a => a.style.display !== 'none');
+          g.style.display = any ? '' : 'none';
+        });
+      }
       updateCount();
     });
     input.addEventListener('click', (e) => e.stopPropagation());
