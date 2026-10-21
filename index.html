@@ -74,6 +74,17 @@
     <script type="module" crossorigin src="/chip-zorro-website/assets/index-BxD-BT_H.js?v=20261020-clarity"></script>
     <link rel="stylesheet" crossorigin href="/chip-zorro-website/assets/index-BP4r4BL7.css">
     <link rel="stylesheet" href="/chip-zorro-website/assets/site-improvements.css">
+    <style>
+      /* Static snapshot styled as the hero so the pre-app paint matches the design. */
+      body { margin:0; background:#0b0d12; }
+      .cz-initial-content { background:#0b0d12; color:#e2e8f0; font-family:'Plus Jakarta Sans',system-ui,sans-serif; padding:56px max(20px, calc((100vw - 1160px)/2)) 72px; min-height:62vh; box-sizing:border-box; }
+      .cz-initial-content h1 { font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif; font-weight:700; font-size:clamp(2.5rem,6vw,4.35rem); line-height:1.0; letter-spacing:-.02em; color:#fff; margin:0 0 18px; }
+      .cz-initial-content h1 span { color:#f65013; font-style:italic; }
+      .cz-initial-content p { color:#94a3b8; font-size:1.05rem; line-height:1.65; margin:0 0 14px; }
+      .cz-initial-content p:first-of-type { max-width:640px; }
+      .cz-initial-content h2 { font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif; color:#fff; font-size:1.35rem; margin:32px 0 8px; }
+      .cz-initial-content a { color:#f97316; }
+    </style>
   </head>
   <body>
     <!-- Netlify Forms: hidden booking form. Netlify detects it in this HTML at
@@ -101,7 +112,7 @@
     <noscript><p>Chip Zorro provides mobile windshield chip repair in North County San Diego. To arrange service, call <a href="tel:8589434851">(858) 943-4851</a>. Enable JavaScript to use online booking.</p></noscript>
     <div id="root">
       <main class="cz-initial-content">
-        <h1>Windshield chip repair that comes to you.</h1>
+        <h1>Windshield chip repair<br><span>that comes to you.</span></h1>
         <p>Rock chips and short cracks fixed at your home or workplace in about 25 minutes. $99 flat self-pay, and never a replacement upsell.</p>
         <h2>Windshield damage we repair</h2>
         <p>Bullseye chips, starburst chips, combination breaks and eligible short cracks.</p>
