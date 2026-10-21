@@ -267,99 +267,221 @@
   check();
 })();
 
-/* Live Bookings tab inside the built-in admin. Adds an eighth tab,
-   "Live Bookings", next to the existing tabs; it embeds the owner's
-   database admin (chipzorro.com/admin) in the content area. The tab is
-   a clone of an existing tab button, so it inherits the exact compiled
-   styling. React's own tabs keep working untouched: clicking any of
-   them hides the live panel again. Fails silently. */
+/* Admin database sync. When the owner opens the built-in admin, a slim
+   connect bar appears under the tabs. Once the owner connects with the
+   Chip Zorro admin password, bookings from the Hostinger database are
+   merged into the site's own booking store, so they show up in the
+   native "Bookings & Work Orders" tab (and the dashboard counts) like
+   any other booking. Deletions made here are propagated back to the
+   database (after two consecutive checks, for safety); bookings deleted
+   in the database disappear here too. Local-only bookings are never
+   removed. Fails silently; never interrupts the site. */
 (() => {
   'use strict';
-  const IFRAME_SRC = 'https://chipzorro.com/admin/';
-  const ACTIVE_CLASSES = ['bg-orange-600', 'text-white', 'shadow-sm'];
-  const INACTIVE_CLASSES = ['text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800/60'];
-  let myTab = null;
-  let myPanel = null;
-  let iframe = null;
-  let isActive = false;
+  const API = 'https://chipzorro.com/api';
+  const BOOKINGS_KEY = 'chipzorro_bookings';
+  const KNOWN_KEY = 'cz_db_known_orders';
+  const TOMB_KEY = 'cz_db_tombstones';
+  const TOKEN_KEY = 'cz_admin_token';
+  const ALERTED_KEY = 'chipzorro_alerted_bookings';
+  const DB_SENT_KEY = 'chipzorro_db_bookings';
+  const RELOAD_KEY = 'cz_db_last_reload';
+  let bar = null;
+  let syncing = false;
+  const pendingDeletes = new Map();
 
-  const setBtnState = (btn, on) => {
-    if (!btn) return;
-    ACTIVE_CLASSES.forEach((c) => btn.classList.toggle(c, on));
-    INACTIVE_CLASSES.forEach((c) => btn.classList.toggle(c, !on));
+  const token = () => { try { return sessionStorage.getItem(TOKEN_KEY); } catch { return null; } };
+  const readJSON = (key, fallback) => {
+    try {
+      const v = JSON.parse(localStorage.getItem(key) || 'null');
+      return v === null ? fallback : v;
+    } catch { return fallback; }
   };
-  const tabButtons = (tabBar) => [...tabBar.querySelectorAll('button')];
+  const readBookings = () => {
+    const v = readJSON(BOOKINGS_KEY, []);
+    return Array.isArray(v) ? v : [];
+  };
+  const saveBookings = (list) => {
+    try { localStorage.setItem(BOOKINGS_KEY, JSON.stringify(list)); } catch {}
+  };
+  const markSent = (id) => {
+    [ALERTED_KEY, DB_SENT_KEY].forEach((key) => {
+      const set = readJSON(key, null);
+      if (Array.isArray(set) && !set.includes(id)) {
+        set.push(id);
+        try { localStorage.setItem(key, JSON.stringify(set)); } catch {}
+      }
+    });
+  };
   const findTabBar = () => {
     const dash = [...document.querySelectorAll('button')]
       .find((b) => b.textContent.trim().startsWith('Dashboard Overview'));
     return dash ? dash.parentElement : null;
   };
-  const findMain = (tabBar) => {
-    let node = tabBar;
-    for (let i = 0; i < 4 && node; i += 1) {
-      const main = node.querySelector(':scope > main');
-      if (main) return main;
-      node = node.parentElement;
+  const maybeReload = () => {
+    try {
+      const ae = document.activeElement;
+      if (ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) return;
+      const last = Number(sessionStorage.getItem(RELOAD_KEY) || 0);
+      if (Date.now() - last < 15000) return;
+      sessionStorage.setItem(RELOAD_KEY, String(Date.now()));
+      location.reload();
+    } catch {}
+  };
+  const apiFetch = async (path, opts) => {
+    const res = await fetch(API + path, Object.assign({}, opts || {}, {
+      headers: Object.assign({ 'Authorization': 'Bearer ' + token() }, (opts && opts.headers) || {})
+    }));
+    if (res.status === 401) {
+      try { sessionStorage.removeItem(TOKEN_KEY); } catch {}
+      renderBar();
+      throw new Error('unauthorized');
     }
-    return null;
+    return res;
   };
-  const deactivate = () => {
-    if (!isActive) return;
-    isActive = false;
-    setBtnState(myTab, false);
-    if (myPanel) myPanel.style.display = 'none';
-    const tabBar = myTab && myTab.parentElement;
-    const main = tabBar && findMain(tabBar);
-    if (main) main.style.display = '';
+  const sync = async () => {
+    if (syncing || !token()) return;
+    syncing = true;
+    try {
+      const res = await apiFetch('/bookings.php');
+      const data = await res.json();
+      const dbList = Array.isArray(data.bookings) ? data.bookings : [];
+      const dbOrders = new Set(dbList.map((b) => b && b.orderNumber).filter(Boolean));
+      let local = readBookings();
+      const localOrders = new Set(local.map((b) => b && b.orderNumber).filter(Boolean));
+      const localIds = new Set(local.map((b) => b && b.id).filter(Boolean));
+      const known = readJSON(KNOWN_KEY, null);
+      let changed = false;
+
+      // Bookings deleted here -> delete in the database. A tombstone is
+      // recorded on first sight so the merge below can never resurrect
+      // the booking while the delete is pending; the DELETE itself only
+      // fires after the booking is still gone on a second check.
+      if (Array.isArray(known)) {
+        let tombs = readJSON(TOMB_KEY, []);
+        if (!Array.isArray(tombs)) tombs = [];
+        const goneLocally = known.filter((o) => dbOrders.has(o) && !localOrders.has(o));
+        goneLocally.forEach((o) => { if (!tombs.includes(o)) tombs.push(o); });
+        for (const order of [...tombs]) {
+          if (!dbOrders.has(order) || localOrders.has(order)) {
+            tombs = tombs.filter((o) => o !== order);
+            pendingDeletes.delete(order);
+            continue;
+          }
+          const n = (pendingDeletes.get(order) || 0) + 1;
+          pendingDeletes.set(order, n);
+          if (n >= 2) {
+            pendingDeletes.delete(order);
+            tombs = tombs.filter((o) => o !== order);
+            try { await apiFetch('/bookings.php?order=' + encodeURIComponent(order), { method: 'DELETE' }); } catch {}
+            dbOrders.delete(order);
+          }
+        }
+        try { localStorage.setItem(TOMB_KEY, JSON.stringify(tombs)); } catch {}
+        sync._tombs = tombs;
+        // Bookings deleted in the database -> remove here (only ones we synced before).
+        const removedRemotely = known.filter((o) => !dbOrders.has(o) && localOrders.has(o));
+        if (removedRemotely.length) {
+          local = local.filter((b) => !removedRemotely.includes(b.orderNumber));
+          changed = true;
+        }
+      }
+      // New database bookings -> add here, and never alert on them.
+      // Tombstoned orders are skipped: they are pending deletion.
+      const tombsNow = Array.isArray(sync._tombs) ? sync._tombs : readJSON(TOMB_KEY, []);
+      dbList.forEach((b) => {
+        if (!b || !b.orderNumber || localOrders.has(b.orderNumber) || (b.id && localIds.has(b.id))) return;
+        if (Array.isArray(tombsNow) && tombsNow.includes(b.orderNumber)) return;
+        local.push(b);
+        localOrders.add(b.orderNumber);
+        if (b.id) { localIds.add(b.id); markSent(b.id); }
+        changed = true;
+      });
+      try { localStorage.setItem(KNOWN_KEY, JSON.stringify([...dbOrders])); } catch {}
+      if (changed) {
+        saveBookings(local);
+        maybeReload();
+      }
+    } catch {}
+    syncing = false;
   };
-  const activate = () => {
-    const tabBar = myTab && myTab.parentElement;
-    if (!tabBar) return;
-    const main = findMain(tabBar);
-    if (!main || !myPanel) return;
-    isActive = true;
-    tabButtons(tabBar).forEach((b) => { if (b !== myTab) setBtnState(b, false); });
-    setBtnState(myTab, true);
-    main.style.display = 'none';
-    myPanel.style.display = '';
-    if (iframe && !iframe.getAttribute('src')) iframe.setAttribute('src', IFRAME_SRC);
+  const renderBar = () => {
+    if (!bar || !bar.isConnected) return;
+    const connected = Boolean(token());
+    bar.innerHTML = '';
+    bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;' +
+      'background:#0f172a;border-top:1px solid #1e293b;padding:8px 12px;font:12px/1.5 Arial,Helvetica,sans-serif;';
+    const msg = document.createElement('span');
+    msg.style.color = connected ? '#6ee7b7' : '#94a3b8';
+    msg.textContent = connected
+      ? '● Live bookings connected — database bookings show in Bookings & Work Orders.'
+      : '○ Live bookings are off — sign in to show database bookings in this admin.';
+    bar.appendChild(msg);
+    if (connected) {
+      const out = document.createElement('button');
+      out.type = 'button';
+      out.textContent = 'Disconnect';
+      out.style.cssText = 'background:#1e293b;color:#cbd5e1;border:1px solid #334155;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;';
+      out.addEventListener('click', () => {
+        try { sessionStorage.removeItem(TOKEN_KEY); } catch {}
+        renderBar();
+      });
+      bar.appendChild(out);
+    } else {
+      const pw = document.createElement('input');
+      pw.type = 'password';
+      pw.placeholder = 'Admin password';
+      pw.autocomplete = 'current-password';
+      pw.style.cssText = 'background:#020617;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:5px 9px;font-size:12px;min-width:170px;';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Connect live bookings';
+      btn.style.cssText = 'background:#ea580c;color:#fff;border:0;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:bold;';
+      const note = document.createElement('span');
+      note.style.color = '#fca5a5';
+      const attempt = async () => {
+        note.textContent = '';
+        btn.disabled = true;
+        try {
+          const res = await fetch(API + '/login.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw.value })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.token) {
+            try { sessionStorage.setItem(TOKEN_KEY, data.token); } catch {}
+            renderBar();
+            sync();
+          } else {
+            note.textContent = data.error === 'locked_out' ? 'Too many wrong attempts — locked for 10 minutes.'
+              : data.error === 'admin_password_not_set' ? 'Password not set yet — set it at chipzorro.com/admin first.'
+              : 'Wrong password.';
+          }
+        } catch { note.textContent = 'Could not reach the server.'; }
+        btn.disabled = false;
+      };
+      btn.addEventListener('click', attempt);
+      pw.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') attempt(); });
+      bar.appendChild(pw);
+      bar.appendChild(btn);
+      bar.appendChild(note);
+    }
   };
   const inject = () => {
     try {
       const tabBar = findTabBar();
       if (!tabBar) return;
-      if (myTab && myTab.parentElement === tabBar && myPanel && myPanel.isConnected) return;
-      const main = findMain(tabBar);
-      if (!main) return;
-      const dash = tabButtons(tabBar)
-        .find((b) => b.textContent.trim().startsWith('Dashboard Overview'));
-      if (!dash) return;
-      myTab = dash.cloneNode(true);
-      myTab.removeAttribute('id');
-      const label = myTab.querySelector('span');
-      if (label) label.textContent = 'Live Bookings';
-      setBtnState(myTab, false);
-      myTab.addEventListener('click', activate);
-      const bookingsBtn = tabButtons(tabBar)
-        .find((b) => b.textContent.includes('Bookings & Work Orders'));
-      if (bookingsBtn) bookingsBtn.after(myTab); else tabBar.appendChild(myTab);
-      myPanel = document.createElement('section');
-      myPanel.id = 'cz-live-panel';
-      myPanel.className = main.className;
-      myPanel.style.display = 'none';
-      iframe = document.createElement('iframe');
-      iframe.title = 'Chip Zorro live bookings admin';
-      iframe.style.cssText = 'width:100%;height:calc(100dvh - 190px);min-height:480px;border:0;border-radius:12px;background:#f7f6f2;';
-      myPanel.appendChild(iframe);
-      main.after(myPanel);
-      isActive = false;
-      tabBar.addEventListener('click', (ev) => {
-        const btn = ev.target.closest('button');
-        if (btn && btn !== myTab) deactivate();
-      });
+      if (bar && bar.isConnected) return;
+      bar = document.createElement('div');
+      bar.id = 'cz-sync-bar';
+      tabBar.after(bar);
+      renderBar();
+      if (token()) sync();
     } catch {}
   };
   const observer = new MutationObserver(() => { inject(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
+  setInterval(() => { if (token() && findTabBar()) sync(); }, 30000);
   inject();
 })();
