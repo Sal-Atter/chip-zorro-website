@@ -485,3 +485,53 @@
   setInterval(() => { if (token() && findTabBar()) sync(); }, 30000);
   inject();
 })();
+
+/* Hero header redesign (Option 1, approved 2026-10-20). Hides the badge-pill
+   row above the headline, inserts the mono kicker, and appends the rating
+   lockup under the booking card. Headline/sub copy lives in the bundle;
+   sizing lives in site-improvements.css. Idempotent; re-applies after
+   React re-renders via the observer. */
+(() => {
+  const apply = () => {
+    try {
+      const h1 = document.querySelector('h1.cz-hero-title');
+      if (!h1) return;
+      if (!document.querySelector('[data-cz-hero-badges]')) {
+        const divs = document.querySelectorAll('div');
+        for (const d of divs) {
+          if (d.classList && d.classList.contains('justify-between') &&
+              d.textContent.includes('We come to you') &&
+              d.textContent.includes('verified repairs')) {
+            d.style.display = 'none';
+            d.setAttribute('data-cz-hero-badges', '1');
+            break;
+          }
+        }
+      }
+      if (!document.querySelector('.cz-hero-kicker')) {
+        const k = document.createElement('div');
+        k.className = 'cz-hero-kicker';
+        k.innerHTML = '<span class="cz-hero-kicker-rule"></span><span>MOBILE SERVICE&nbsp;&nbsp;·&nbsp;&nbsp;NORTH COUNTY SAN DIEGO</span>';
+        h1.parentNode.insertBefore(k, h1);
+      }
+      if (!document.querySelector('.cz-rating-lockup')) {
+        let col = h1;
+        while (col.parentNode && typeof col.parentNode.className === 'string' &&
+               !col.parentNode.className.includes('grid-cols')) {
+          col = col.parentNode;
+        }
+        if (col !== h1 && col.parentNode) {
+          const lock = document.createElement('div');
+          lock.className = 'cz-rating-lockup';
+          lock.innerHTML = '<span class="cz-rating-num">5</span>' +
+            '<span class="cz-rating-stars">★★★★★</span>' +
+            '<span class="cz-rating-div"></span>' +
+            '<span class="cz-rating-cap">VERIFIED REPAIRS<br>ACROSS NORTH COUNTY</span>';
+          col.appendChild(lock);
+        }
+      }
+    } catch {}
+  };
+  new MutationObserver(() => apply()).observe(document.documentElement, { childList: true, subtree: true });
+  apply();
+})();

@@ -70,3 +70,15 @@ button, a, input, select, textarea { touch-action: manipulation; }
 @media(max-width:1000px) { .cz-damage-examples { grid-template-columns:repeat(2,minmax(0,1fr)); gap:30px 22px; } }
 @media(max-width:640px) { .cz-damage-guide { padding:48px 20px; } .cz-damage-examples { gap:26px 14px; } .cz-damage-examples h3 { font-size:19px; } .cz-damage-examples p { font-size:14px; } .cz-damage-help { flex-direction:column; align-items:stretch; padding:24px; gap:20px; } .cz-damage-footnote { gap:8px; } }
 @media(max-width:360px) { .cz-damage-examples { grid-template-columns:1fr; } }
+
+/* Hero header redesign (Option 1, approved 2026-10-20): poster headline,
+   mono kicker, rating lockup. */
+h1.cz-hero-title { font-size:clamp(3.1rem,5.6vw,5.3rem) !important; line-height:.99 !important; letter-spacing:-.02em !important; }
+h1.cz-hero-title span { font-style:italic; }
+.cz-hero-kicker { display:flex; align-items:center; gap:12px; margin-bottom:22px; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.22em; color:#cbd5e1; }
+.cz-hero-kicker-rule { display:inline-block; width:36px; height:2px; background:#f65013; flex-shrink:0; }
+.cz-rating-lockup { display:flex; align-items:center; gap:16px; margin-top:20px; }
+.cz-rating-num { font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:32px; color:#fff; line-height:1; }
+.cz-rating-stars { color:#f97316; font-size:17px; letter-spacing:3px; }
+.cz-rating-div { display:inline-block; width:1px; height:30px; background:rgba(255,255,255,.18); }
+.cz-rating-cap { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; color:#cbd5e1; line-height:1.55; }
