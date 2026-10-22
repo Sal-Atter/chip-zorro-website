@@ -603,11 +603,11 @@
         ${link('diagnostic-section', 'Photo Chip Check', 'See if your damage can be repaired', NEW)}
         ${link('windshield-guide-section', 'Repair vs. Replace', 'Why a $99 repair beats a $900 replacement', NEW)}
         ${link('faq-section', 'FAQ & Warranty', 'Eligibility, insurance and the no-spread guarantee')}
-        ${link('insurance-billing-section', 'Insurance Claims Desk', 'Coverage depends on your policy — we check first')}
+        ${link('insurance-billing-section', 'Insurance Claims Desk', 'We verify your benefits first')}
       </div>
       <div class="cz-rail"><div class="cz-mega-label" style="color:#fdba74;">FLAT-RATE REPAIR</div>
         <div class="cz-rail-price">$99</div>
-        <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:8px 0 16px;">Per chip, at your home or work.<br>Additional chips +$30. Never a replacement upsell.</p>
+        <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:8px 0 16px;">Per chip, at your home or work.<br>Additional chips +$30.</p>
         <button data-book="1" style="width:100%;background:${ORANGE};color:#fff;font-weight:800;font-size:13.5px;border:none;border-radius:11px;padding:12px;cursor:pointer;letter-spacing:.02em;">BOOK REPAIR</button>
         <a href="tel:+18589434851" style="display:block;text-align:center;margin-top:12px;color:#fff;font-weight:700;font-size:13.5px;text-decoration:none;">(858) 943-4851</a>
       </div></div>`;
